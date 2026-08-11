@@ -2,7 +2,7 @@
 // ESTADO Y DATOS DEL JUEGO (LOCALSTORAGE)
 // ==========================================
 
-// Definición de las 10 misiones/planetas del juego
+// Definición de las 11 misiones/planetas del juego
 const PLANETAS_DATA = [
     { id: 1, name: "Conociendo los números", emoji: "🪐", page: "mission1.html" },
     { id: 2, name: "Explorando el conteo", emoji: "🔴", page: "mission2.html" },
@@ -20,6 +20,7 @@ const PLANETAS_DATA = [
 // Estado por defecto del jugador
 const DEFAULT_GAME_STATE = {
     playerName: "Explorador",
+    username: "Explorador",
     avatar: "👨‍🚀",
     stars: 0,
     points: 0,
@@ -29,21 +30,27 @@ const DEFAULT_GAME_STATE = {
 
 let gameState = { ...DEFAULT_GAME_STATE };
 
-// Cargar estado desde localStorage
+// Cargar estado desde localStorage (soporta MISION_ESPACIAL_DATA y GAME_STATE)
 function loadGameState() {
-    const savedData = localStorage.getItem("MISION_ESPACIAL_DATA");
+    const savedData = localStorage.getItem("MISION_ESPACIAL_DATA") || localStorage.getItem("GAME_STATE");
     if (savedData) {
         try {
-            gameState = JSON.parse(savedData);
+            const parsed = JSON.parse(savedData);
+            gameState = { ...DEFAULT_GAME_STATE, ...parsed };
+            // Asegurar sincronización de nombre de usuario
+            if (parsed.username && !parsed.playerName) gameState.playerName = parsed.username;
+            if (parsed.playerName && !parsed.username) gameState.username = parsed.playerName;
         } catch (e) {
             console.error("Error cargando el progreso del juego:", e);
         }
     }
 }
 
-// Guardar estado en localStorage
+// Guardar estado en localStorage (Sincronizado en ambas claves)
 function saveGameState() {
+    gameState.username = gameState.playerName;
     localStorage.setItem("MISION_ESPACIAL_DATA", JSON.stringify(gameState));
+    localStorage.setItem("GAME_STATE", JSON.stringify(gameState));
 }
 
 // ==========================================
@@ -55,7 +62,22 @@ document.addEventListener("DOMContentLoaded", () => {
     setupUIEvents();
     updateUIElements();
     renderMapPlanets();
+
+    // SI YA COMPLETÓ AL MENOS 1 MISIÓN O HA GANADO ESTRELLAS, IR DIRECTO AL MAPA DE MISIONES
+    if (gameState.completedMissions.length > 0 || gameState.stars > 0) {
+        mostrarPantallaMapaDirecto();
+    }
 });
+
+function mostrarPantallaMapaDirecto() {
+    const welcomeScreen = document.getElementById("screen-welcome");
+    const mapScreen = document.getElementById("screen-map");
+
+    if (welcomeScreen && mapScreen) {
+        welcomeScreen.classList.remove("active");
+        mapScreen.classList.add("active");
+    }
+}
 
 // Actualiza los textos y contadores en pantalla
 function updateUIElements() {
@@ -80,7 +102,7 @@ function updateUIElements() {
     if (mapPoints) mapPoints.textContent = gameState.points;
 }
 
-// Renderiza las tarjetas de los 10 planetas en la rejilla
+// Renderiza las tarjetas de los 11 planetas en la rejilla
 function renderMapPlanets() {
     const container = document.getElementById("planets-container");
     if (!container) return;
@@ -125,6 +147,7 @@ function setupUIEvents() {
         inputName.addEventListener("change", (e) => {
             const newName = e.target.value.trim() || "Explorador";
             gameState.playerName = newName;
+            gameState.username = newName;
             saveGameState();
             updateUIElements();
         });
@@ -134,6 +157,12 @@ function setupUIEvents() {
     const btnStart = document.getElementById("btn-start");
     if (btnStart) {
         btnStart.addEventListener("click", () => {
+            const inputNameVal = document.getElementById("player-name-input")?.value.trim();
+            if (inputNameVal) {
+                gameState.playerName = inputNameVal;
+                gameState.username = inputNameVal;
+                saveGameState();
+            }
             switchScreen("screen-welcome", "screen-map");
         });
     }
@@ -147,6 +176,14 @@ function setupUIEvents() {
                 saveGameState();
                 updateUIElements();
                 renderMapPlanets();
+                
+                // Regresar a la pantalla de bienvenida al reiniciar
+                const welcomeScreen = document.getElementById("screen-welcome");
+                const mapScreen = document.getElementById("screen-map");
+                if (welcomeScreen && mapScreen) {
+                    mapScreen.classList.remove("active");
+                    welcomeScreen.classList.add("active");
+                }
             }
         });
     }
