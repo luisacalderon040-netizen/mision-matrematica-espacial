@@ -27,15 +27,15 @@
             border-radius: 10px;
             overflow: hidden;
             margin: 20px 0;
-            border: 1px solid var(--glass-border);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         .progress-bar-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, var(--primary-cyan), var(--primary-violet));
+            background: linear-gradient(90deg, #00f0ff, #7b2cbf);
             transition: width 0.4s ease;
-            box-shadow: 0 0 10px var(--primary-cyan);
+            box-shadow: 0 0 10px #00f0ff;
         }
 
         .question-card {
@@ -56,7 +56,7 @@
             padding: 15px;
             background: rgba(255, 255, 255, 0.03);
             border-radius: 12px;
-            border: 1px dashed var(--glass-border);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -72,8 +72,8 @@
 
         .option-btn {
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
-            color: var(--text-light);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
             padding: 15px;
             border-radius: 14px;
             font-size: 1.1rem;
@@ -82,15 +82,15 @@
         }
 
         .option-btn:hover {
-            background: rgba(0, 242, 255, 0.15);
-            border-color: var(--primary-cyan);
+            background: rgba(0, 240, 255, 0.15);
+            border-color: #00f0ff;
             transform: translateY(-2px);
         }
 
         .option-btn.selected {
-            background: rgba(0, 242, 255, 0.3);
-            border-color: var(--primary-cyan);
-            box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+            background: rgba(0, 240, 255, 0.3);
+            border-color: #00f0ff;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
         }
 
         .feedback-message {
@@ -102,38 +102,60 @@
 
         .feedback-correct { color: #00ff88; text-shadow: 0 0 8px rgba(0, 255, 136, 0.5); }
         .feedback-wrong { color: #ff4d4d; text-shadow: 0 0 8px rgba(255, 77, 77, 0.5); }
+
+        .btn-primary-space {
+            background: linear-gradient(90deg, #00f0ff, #7b2cbf);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .btn-secondary-space {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
-
+    <!-- Fondo de Estrellas -->
     <div id="stars-container"></div>
     <div id="stars2-container"></div>
 
     <div class="app-container mission-container">
         
-
+        <!-- Header de la Misión -->
         <header class="glassmorphism mission-header">
-            <button id="btn-back" class="btn-secondary-space">⬅ Volver al Mapa</button>
+            <!-- BOTÓN DIRIGIDO AL MAPA DE MISIONES -->
+            <button id="btn-back" class="btn-secondary-space">🗺️ Volver al Mapa</button>
             <div class="user-pill">🟡 Misión 3: Comparando planetas</div>
             <div class="stat-pill">⭐ <span id="m-stars">0</span></div>
         </header>
 
-     
+        <!-- Barra de Progreso de la Misión -->
         <div class="progress-bar-container">
             <div id="progress-fill" class="progress-bar-fill"></div>
         </div>
 
+        <!-- Tarjeta del Ejercicio -->
         <main class="glassmorphism question-card">
             <div class="planet-number" id="question-number">Pregunta 1 de 3</div>
             <h2 class="question-text" id="question-text">Cargando desafío espacial...</h2>
 
             <div class="visual-container" id="visual-container">
-               
+                <!-- Se mostrarán los elementos a comparar -->
             </div>
 
             <div class="options-grid" id="options-container">
-            
+                <!-- Las opciones se generarán dinámicamente -->
             </div>
 
             <div class="feedback-message" id="feedback"></div>
@@ -237,24 +259,38 @@
 
         function finalizarMision() {
             elProgress.style.width = "100%";
-            const data = JSON.parse(localStorage.getItem("MISION_ESPACIAL_DATA") || "{}");
+            
+            // Cargar estado previo
+            let data = {};
+            try {
+                const saved = localStorage.getItem("GAME_STATE") || localStorage.getItem("MISION_ESPACIAL_DATA");
+                if (saved) data = JSON.parse(saved);
+            } catch(e) {}
+
             data.stars = (data.stars || 0) + estrellasGanadas;
             data.points = (data.points || 0) + (estrellasGanadas * 50);
             
+            // Marcar Misión 3 completada
             if (!data.completedMissions) data.completedMissions = [];
             if (!data.completedMissions.includes(3)) data.completedMissions.push(3);
 
+            // Desbloquear Misión 4
             if (!data.unlockedMissions) data.unlockedMissions = [1, 2, 3];
             if (!data.unlockedMissions.includes(4)) data.unlockedMissions.push(4);
 
+            // Guardar progreso global
             localStorage.setItem("MISION_ESPACIAL_DATA", JSON.stringify(data));
+            localStorage.setItem("GAME_STATE", JSON.stringify(data));
 
             alert(`🎉 ¡Misión 3 Completada!\nHas ganado ${estrellasGanadas} estrellas y desbloqueado la Misión 4.`);
-            window.location.href = "./index.html";
+            
+            // Redirigir directamente a map.html
+            window.location.href = "map.html";
         }
 
+        // REDIRECCIÓN DIRECTA AL MAPA DESDE EL BOTÓN VOLVER
         document.getElementById("btn-back").addEventListener("click", () => {
-            window.location.href = "./index.html";
+            window.location.href = "map.html";
         });
 
         cargarPregunta();
