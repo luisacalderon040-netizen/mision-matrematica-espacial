@@ -21,23 +21,65 @@
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Contenedor de Confeti */
+        #confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            overflow: hidden;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(105vh) rotate(720deg);
+                opacity: 0;
+            }
         }
 
         .game-card {
-            background: #121838;
-            border: 1px solid #1e295d;
-            border-radius: 20px;
-            padding: 30px;
+            background: rgba(18, 24, 56, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 24px;
+            padding: 35px;
             max-width: 650px;
             width: 100%;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 40px rgba(0, 240, 255, 0.15);
             text-align: center;
+            position: relative;
+            z-index: 10;
+            transition: all 0.5s ease;
+        }
+
+        .game-card.celebrate-card {
+            border: 2px solid #ffd700;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.4), inset 0 0 20px rgba(255, 215, 0, 0.2);
         }
 
         .progress-bar-container {
             width: 100%;
-            height: 10px;
-            background-color: #1e2548;
+            height: 12px;
+            background-color: rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             margin-bottom: 25px;
             overflow: hidden;
@@ -48,11 +90,12 @@
             width: 33%;
             background: linear-gradient(90deg, #ff007a, #00f0ff);
             transition: width 0.4s ease;
+            box-shadow: 0 0 10px #00f0ff;
         }
 
         .step-tag {
             color: #00f0ff;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: bold;
             letter-spacing: 1.5px;
             text-transform: uppercase;
@@ -67,7 +110,7 @@
         }
 
         .math-box {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.04);
             border: 1px dashed #2d386b;
             border-radius: 12px;
             padding: 15px;
@@ -92,8 +135,8 @@
         }
 
         .option-btn {
-            background: #182046;
-            border: 1px solid #2a366f;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             color: #ffffff;
             padding: 15px;
             border-radius: 12px;
@@ -104,8 +147,9 @@
         }
 
         .option-btn:hover {
-            background: #222d61;
+            background: rgba(0, 240, 255, 0.15);
             border-color: #00f0ff;
+            transform: translateY(-2px);
         }
 
         .option-btn.selected-correct {
@@ -120,6 +164,7 @@
             font-weight: 600;
             margin-bottom: 20px;
             min-height: 22px;
+            text-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
         }
 
         .action-btn {
@@ -136,8 +181,14 @@
             transition: transform 0.2s ease, opacity 0.2s ease;
         }
 
+        .action-btn-gold {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #000000;
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
+        }
+
         .action-btn:hover {
-            transform: scale(1.01);
+            transform: scale(1.02);
             opacity: 0.95;
         }
 
@@ -145,15 +196,54 @@
             display: none !important;
         }
 
+        /* Animaciones para la celebración */
         .trophy-icon {
-            font-size: 70px;
+            font-size: 80px;
             margin-bottom: 15px;
+            display: inline-block;
+            animation: floatTrophy 2.5s ease-in-out infinite;
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6));
+        }
+
+        @keyframes floatTrophy {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.05); }
+        }
+
+        .victory-title {
+            font-size: 26px;
+            color: #ffd700;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            margin-bottom: 15px;
+        }
+
+        .farewell-text {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #ffffff;
+            margin-bottom: 30px;
+        }
+
+        .code-tag {
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #00f0ff;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+            background: rgba(0, 240, 255, 0.1);
+            padding: 4px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 240, 255, 0.3);
         }
     </style>
 </head>
 <body>
 
-    <div class="game-card">
+    <!-- Contenedor para el confeti espacial -->
+    <div id="confetti-container"></div>
+
+    <div class="game-card" id="main-card">
         
         <!-- Vista del Quiz -->
         <div id="quiz-view">
@@ -173,12 +263,17 @@
             <button id="next-btn" class="action-btn hidden" onclick="siguienteAccion()">Siguiente 🚀</button>
         </div>
 
-        <!-- Vista de Finalización / Victoria -->
+        <!-- Vista de Finalización / Celebración Espacial -->
         <div id="victory-view" class="hidden">
             <div class="trophy-icon">🏆✨</div>
-            <h2 style="font-size: 24px; margin-bottom: 10px;">¡RECORRIDO COMPLETADO!</h2>
-            <p style="color: #a0aec0; margin-bottom: 25px;">Has dominado la última frontera espacial. ¡Felicidades, Cadete!</p>
-            <button class="action-btn" onclick="volverAlMapa()">Volver al Mapa Principal 🚀</button>
+            <h2 class="victory-title">¡RECORRIDO COMPLETADO!</h2>
+            
+            <p class="farewell-text">
+                ¡Gracias por jugar! Te vemos pronto en otra aventura.<br>
+                <span class="code-tag">GAKAVCTCA 🛸⭐</span>
+            </p>
+
+            <button class="action-btn action-btn-gold" onclick="volverAlMapa()">Volver al Mapa Principal 🚀</button>
         </div>
 
     </div>
@@ -271,30 +366,59 @@
             if (indice < preguntas.length) {
                 cargarPregunta();
             } else {
-                // Mostrar pantalla final
+                // Mostrar pantalla final con celebración
                 document.getElementById("quiz-view").classList.add("hidden");
                 document.getElementById("victory-view").classList.remove("hidden");
+                document.getElementById("main-card").classList.add("celebrate-card");
+                
+                lanzarConfetiEspacial();
                 guardarProgreso();
+            }
+        }
+
+        // Genera destellos y confeti de colores espaciales
+        function lanzarConfetiEspacial() {
+            const container = document.getElementById("confetti-container");
+            const colores = ["#00f0ff", "#ffd700", "#ff007a", "#7b2cbf", "#00ff88", "#ffffff"];
+
+            for (let i = 0; i < 70; i++) {
+                const confetti = document.createElement("div");
+                confetti.className = "confetti";
+                confetti.style.left = Math.random() * 100 + "vw";
+                confetti.style.backgroundColor = colores[Math.floor(Math.random() * colores.length)];
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + "s";
+                confetti.style.animationDelay = (Math.random() * 2) + "s";
+                confetti.style.boxShadow = `0 0 8px ${confetti.style.backgroundColor}`;
+                container.appendChild(confetti);
             }
         }
 
         function guardarProgreso() {
             try {
-                let state = JSON.parse(localStorage.getItem("GAME_STATE")) || {};
-                if (!state.completedMissions) state.completedMissions = [];
-                if (!state.completedMissions.includes(11)) state.completedMissions.push(11);
-                localStorage.setItem("GAME_STATE", JSON.stringify(state));
+                let state = { completedMissions: [], unlockedMissions: [1] };
+                const saved = localStorage.getItem("GAME_STATE") || localStorage.getItem("MISION_ESPACIAL_DATA");
+                
+                if (saved) {
+                    state = Object.assign(state, JSON.parse(saved));
+                }
+
+                if (!state.completedMissions.includes(11)) {
+                    state.completedMissions.push(11);
+                }
+
+                const dataString = JSON.stringify(state);
+                localStorage.setItem("GAME_STATE", dataString);
+                localStorage.setItem("MISION_ESPACIAL_DATA", dataString);
             } catch (e) {
-                console.log("Progreso guardado");
+                console.log("Progreso guardado correctamente.");
             }
         }
 
-        // FUNCIÓN CLAVE: Redirige de regreso al Mapa o Inicio
         function volverAlMapa() {
-            window.location.href = "index.html"; 
+            window.location.href = "map.html"; 
         }
 
-        // Iniciar
+        // Iniciar juego
         cargarPregunta();
     </script>
 </body>
