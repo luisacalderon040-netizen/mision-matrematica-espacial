@@ -35,10 +35,10 @@
             font-size: 1.05rem;
         }
 
-        /* CUADRÍCULA DE 11 PLANETAS EN VARIAS FILAS */
+        /* CUADRÍCULA DE PLANETAS */
         .planets-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 25px;
             margin-top: 20px;
         }
@@ -135,26 +135,22 @@
 
     <div class="app-container map-container">
         
-        <!-- Header del Mapa -->
         <header class="glassmorphism map-header">
             <button id="btn-home" class="btn-secondary-space" onclick="window.location.href='index.html'">🏠 Inicio</button>
             <div class="user-pill">🗺️ Mapa de Misiones</div>
             <div class="stat-pill">⭐ Total: <span id="total-stars">0</span></div>
         </header>
 
-        <!-- Título principal -->
         <div class="title-section">
             <h1>Selecciona un Planeta</h1>
             <p>Completa cada misión para desbloquear la siguiente exploración.</p>
         </div>
 
-        <!-- Contenedor donde se muestran las 11 misiones -->
         <div class="planets-grid" id="planets-container"></div>
 
     </div>
 
     <script>
-        // LISTA DE LAS 11 MISIONES COMPLETAS
         const misiones = [
             { id: 1, titulo: "Misión 1: Conociendo los Números", icono: "🪐", url: "mission1.html" },
             { id: 2, titulo: "Misión 2: Explorando el Conteo", icono: "🔴", url: "mission2.html" },
@@ -164,25 +160,27 @@
             { id: 6, titulo: "Misión 6: Restas Intergalácticas", icono: "☄️", url: "mission6.html" },
             { id: 7, titulo: "Misión 7: Secuencias Cósmicas", icono: "⭐", url: "mission7.html" },
             { id: 8, titulo: "Misión 8: Multiplicación Estelar", icono: "🛸", url: "mission8.html" },
-            { id: 9, titulo: "Misión 9: Divisiones Orbitale", icono: "🛰️", url: "mission9.html" },
+            { id: 9, titulo: "Misión 9: Divisiones Orbitales", icono: "🛰️", url: "mission9.html" },
             { id: 10, titulo: "Misión 10: Fracciones Lunares", icono: "🌙", url: "mission10.html" },
             { id: 11, titulo: "Misión 11: Desafío Final Galáctico", icono: "🏆", url: "mission11.html" }
         ];
 
         function renderizarMapa() {
-            let data = { stars: 0, completedMissions: [], unlockedMissions: [1] };
+            let data = { stars: 0, completedMissions: [1, 2, 3], unlockedMissions: [1, 2, 3, 4] };
+            
             try {
                 const saved = localStorage.getItem("GAME_STATE") || localStorage.getItem("MISION_ESPACIAL_DATA");
                 if (saved) {
                     const parsed = JSON.parse(saved);
-                    data.stars = parsed.stars || 0;
-                    data.completedMissions = parsed.completedMissions || [];
-                    data.unlockedMissions = parsed.unlockedMissions || [1];
+                    if (parsed.stars !== undefined) data.stars = parsed.stars;
+                    if (parsed.completedMissions) data.completedMissions = parsed.completedMissions;
+                    if (parsed.unlockedMissions) data.unlockedMissions = parsed.unlockedMissions;
                 }
-            } catch(e) {}
+            } catch(e) {
+                console.error("Error al leer el estado del juego:", e);
+            }
 
             document.getElementById("total-stars").textContent = data.stars;
-
             const container = document.getElementById("planets-container");
             container.innerHTML = "";
 
@@ -197,13 +195,7 @@
 
                 card.className = `glassmorphism planet-card ${estadoClass}`;
 
-                let html = "";
-                if (esCompletada) {
-                    html += `<div class="badge-completed">✓ COMPLETADA</div>`;
-                } else {
-                    html += `<div style="height:21px;"></div>`;
-                }
-
+                let html = esCompletada ? `<div class="badge-completed">✓ COMPLETADA</div>` : `<div style="height:21px;"></div>`;
                 html += `<div class="planet-icon">${m.icono}</div>`;
                 html += `<div class="planet-title">${m.titulo}</div>`;
 
@@ -220,6 +212,8 @@
             });
         }
 
+        // Ejecutar al cargar la página
+        document.addEventListener("DOMContentLoaded", renderizarMapa);
         renderizarMapa();
     </script>
 </body>
