@@ -17,7 +17,25 @@
             justify-content: space-between;
             align-items: center;
             padding: 15px 25px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+            border: 1px solid var(--glass-border);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary-cyan), var(--primary-violet));
+            transition: width 0.4s ease;
+            box-shadow: 0 0 10px var(--primary-cyan);
         }
 
         .game-card {
@@ -54,10 +72,15 @@
             transition: all 0.2s ease;
         }
 
-        .btn-option:hover {
+        .btn-option:hover:not(:disabled) {
             background: rgba(0, 240, 255, 0.2);
             border-color: #00f0ff;
             transform: scale(1.03);
+        }
+
+        .btn-option:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
         }
 
         .btn-secondary-space {
@@ -89,15 +112,21 @@
         
         <!-- Header de la Misión -->
         <header class="glassmorphism mission-header">
-            <button class="btn-secondary-space" onclick="window.location.href='map.html'">🗺️ Volver al Mapa</button>
+            <button id="btn-back" class="btn-secondary-space">⬅ Volver al Mapa</button>
             <div class="user-pill">🚀 Misión 5: Sumas Espaciales</div>
-            <div class="stat-pill">⭐ Estrellas: <span id="stars-count">0</span></div>
+            <div class="stat-pill">⭐ <span id="stars-count">0</span></div>
         </header>
 
+        <!-- Barra de Progreso -->
+        <div class="progress-bar-container">
+            <div id="progress-fill" class="progress-bar-fill"></div>
+        </div>
+
         <!-- Tarjeta del Juego -->
-        <div class="glassmorphism game-card" id="game-card">
+        <main class="glassmorphism game-card" id="game-card">
+            <div class="planet-number" id="question-number">Paso 1 de 5</div>
             <h2>Calcula la suma espacial 🌌</h2>
-            <p style="color: rgba(255, 255, 255, 0.7);">Resuelve los ejercicios para cargar la energía de la nave.</p>
+            <p style="color: rgba(255, 255, 255, 0.7);">Resuelve las operaciones para cargar la energía de la nave.</p>
 
             <div class="problem-display" id="problem">0 + 0</div>
 
@@ -106,7 +135,7 @@
             </div>
 
             <div class="feedback" id="feedback"></div>
-        </div>
+        </main>
 
     </div>
 
@@ -115,24 +144,41 @@
         let num1 = 0;
         let num2 = 0;
         let respuestaCorrecta = 0;
-        let racha = 0;
-        const totalParaGanar = 5; // Cantidad de sumas correctas para ganar
-        let gameState = { stars: 0, completedMissions: [], unlockedMissions: [1] };
+        let aciertos = 0;
+        const totalParaGanar = 5;
+        let estrellasGanadas = 0;
+        let estrellasIniciales = 0;
 
-        // Cargar progreso del juego
-        function cargarEstado() {
+        const elStarsCount = document.getElementById("stars-count");
+        const elProgressFill = document.getElementById("progress-fill");
+        const elQuestionNumber = document.getElementById("question-number");
+
+        // Cargar estado inicial preservando todos los campos
+        function cargarEstadoInicial() {
             try {
                 const saved = localStorage.getItem("GAME_STATE") || localStorage.getItem("MISION_ESPACIAL_DATA");
                 if (saved) {
-                    gameState = JSON.parse(saved);
+                    const parsed = JSON.parse(saved);
+                    estrellasIniciales = parsed.stars || 0;
                 }
-            } catch(e) {}
-            document.getElementById("stars-count").textContent = gameState.stars || 0;
+            } catch(e) {
+                estrellasIniciales = 0;
+            }
+            actualizarMarcadorEstrellas();
+        }
+
+        function actualizarMarcadorEstrellas() {
+            elStarsCount.textContent = estrellasIniciales + estrellasGanadas;
         }
 
         // Generar un nuevo problema de suma
         function generarProblema() {
             document.getElementById("feedback").textContent = "";
+            
+            // Actualizar número de paso y barra de progreso
+            elQuestionNumber.textContent = `Paso ${aciertos + 1} de ${totalParaGanar}`;
+            elProgressFill.style.width = `${(aciertos / totalParaGanar) * 100}%`;
+
             num1 = Math.floor(Math.random() * 20) + 1;
             num2 = Math.floor(Math.random() * 20) + 1;
             respuestaCorrecta = num1 + num2;
@@ -149,7 +195,6 @@
                 }
             }
 
-            // Mezclar opciones
             const opcionesArray = Array.from(opciones).sort(() => Math.random() - 0.5);
 
             const container = document.getElementById("options");
@@ -158,58 +203,80 @@
                 const btn = document.createElement("button");
                 btn.className = "btn-option";
                 btn.textContent = opt;
-                btn.onclick = () => verificarRespuesta(opt);
+                btn.onclick = () => verificarRespuesta(opt, btn);
                 container.appendChild(btn);
             });
         }
 
-        // Validar la respuesta dada por el usuario
-        function verificarRespuesta(seleccion) {
+        // Validar respuesta
+        function verificarRespuesta(seleccion, boton) {
             const feedbackEl = document.getElementById("feedback");
+            const todosBotones = document.querySelectorAll(".btn-option");
 
             if (seleccion === respuestaCorrecta) {
-                racha++;
-                gameState.stars = (gameState.stars || 0) + 5;
-                document.getElementById("stars-count").textContent = gameState.stars;
+                todosBotones.forEach(b => b.disabled = true);
+                
+                aciertos++;
+                estrellasGanadas++;
+                actualizarMarcadorEstrellas();
+                
                 feedbackEl.className = "feedback correct";
-                feedbackEl.textContent = `¡Excelente! 🚀 (${racha}/${totalParaGanar})`;
+                feedbackEl.textContent = "¡Excelente! 🚀 Suma correcta.";
 
-                if (racha >= totalParaGanar) {
-                    completarMision();
+                if (aciertos >= totalParaGanar) {
+                    elProgressFill.style.width = "100%";
+                    setTimeout(completarMision, 1000);
                 } else {
-                    setTimeout(generarProblema, 1200);
+                    setTimeout(generarProblema, 1000);
                 }
             } else {
+                boton.disabled = true;
                 feedbackEl.className = "feedback incorrect";
-                feedbackEl.textContent = "¡Casi! Inténtalo de nuevo. ☄️";
+                feedbackEl.textContent = "¡Casi! Revisa tu cálculo e inténtalo de nuevo. ☄️";
             }
         }
 
-        // Guardar progreso y regresar al mapa
+        // Guardar datos sin perder misiones desbloqueadas previamente
         function completarMision() {
-            if (!gameState.completedMissions.includes(MISSION_ID)) {
-                gameState.completedMissions.push(MISSION_ID);
-            }
-            // Desbloquear la Misión 6
-            if (!gameState.unlockedMissions.includes(6)) {
-                gameState.unlockedMissions.push(6);
-            }
+            let data = { stars: 0, points: 0, completedMissions: [], unlockedMissions: [1] };
+            
+            try {
+                const saved = localStorage.getItem("GAME_STATE") || localStorage.getItem("MISION_ESPACIAL_DATA");
+                if (saved) {
+                    data = Object.assign(data, JSON.parse(saved));
+                }
+            } catch(e) {}
 
-            // Guardar en ambas llaves para evitar discrepancias
-            localStorage.setItem("GAME_STATE", JSON.stringify(gameState));
-            localStorage.setItem("MISION_ESPACIAL_DATA", JSON.stringify(gameState));
+            // Actualizar datos
+            data.stars = (data.stars || 0) + estrellasGanadas;
+            data.points = (data.points || 0) + (estrellasGanadas * 50);
+
+            if (!data.completedMissions) data.completedMissions = [];
+            if (!data.completedMissions.includes(MISSION_ID)) data.completedMissions.push(MISSION_ID);
+
+            if (!data.unlockedMissions) data.unlockedMissions = [1];
+            if (!data.unlockedMissions.includes(6)) data.unlockedMissions.push(6);
+
+            // Guardar en ambas claves para garantizar compatibilidad
+            const dataString = JSON.stringify(data);
+            localStorage.setItem("GAME_STATE", dataString);
+            localStorage.setItem("MISION_ESPACIAL_DATA", dataString);
 
             const card = document.getElementById("game-card");
             card.innerHTML = `
-                <h1 style="font-size: 3rem; margin-bottom: 15px;">🎉 ¡Misión 5 Completada! 🎉</h1>
-                <p style="font-size: 1.2rem; margin-bottom: 25px;">Has dominado las Sumas Espaciales y desbloqueaste la Misión 6.</p>
-                <button class="btn-option" style="background: linear-gradient(90deg, #00f0ff, #7b2cbf); width: 80%;" onclick="window.location.href='map.html'">
+                <h1 style="font-size: 2.5rem; margin-bottom: 15px; color: #00ff88;">🎉 ¡Misión 5 Completada! 🎉</h1>
+                <p style="font-size: 1.2rem; margin-bottom: 25px;">Has completado las sumas y desbloqueado la Misión 6.</p>
+                <button class="btn-option" style="background: linear-gradient(90deg, #00f0ff, #7b2cbf); width: 80%; margin: 0 auto;" onclick="window.location.href='map.html'">
                     Volver al Mapa de Misiones 🚀
                 </button>
             `;
         }
 
-        cargarEstado();
+        document.getElementById("btn-back").addEventListener("click", () => {
+            window.location.href = "map.html";
+        });
+
+        cargarEstadoInicial();
         generarProblema();
     </script>
 </body>
