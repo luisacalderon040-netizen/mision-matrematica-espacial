@@ -6,136 +6,292 @@
     <title>Misión 11: Gran Recorrido Galáctico</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0b0f26;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             padding: 20px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            font-family: Arial, sans-serif;
+        }
+
+        .game-card {
+            background: #121838;
+            border: 1px solid #1e295d;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 650px;
+            width: 100%;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
             text-align: center;
         }
-        .option-btn {
-            display: block;
+
+        .progress-bar-container {
             width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            background-color: #4A90E2;
-            color: white;
-            border: none;
-            border-radius: 8px;
+            height: 10px;
+            background-color: #1e2548;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 33%;
+            background: linear-gradient(90deg, #ff007a, #00f0ff);
+            transition: width 0.4s ease;
+        }
+
+        .step-tag {
+            color: #00f0ff;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .question-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .math-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px dashed #2d386b;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .math-box span.red {
+            color: #ff3366;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background: #182046;
+            border: 1px solid #2a366f;
+            color: #ffffff;
+            padding: 15px;
+            border-radius: 12px;
             font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.2s ease;
         }
+
         .option-btn:hover {
-            background-color: #357ABD;
+            background: #222d61;
+            border-color: #00f0ff;
         }
+
+        .option-btn.selected-correct {
+            background: #800e58;
+            border: 2px solid #ff007a;
+            box-shadow: 0 0 15px rgba(255, 0, 122, 0.4);
+        }
+
+        .feedback-text {
+            color: #00ff88;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            min-height: 22px;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(90deg, #00f0ff, #7b2cbf);
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.01);
+            opacity: 0.95;
+        }
+
         .hidden {
-            display: none;
+            display: none !important;
         }
-        .trophy {
-            font-size: 80px;
-            margin: 20px 0;
+
+        .trophy-icon {
+            font-size: 70px;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>👑 Misión 11: Gran Recorrido Galáctico</h1>
-        <p>¡Has llegado a la prueba final de la galaxia! Demuestra todo lo que has aprendido.</p>
+    <div class="game-card">
         
-        <hr>
+        <!-- Vista del Quiz -->
+        <div id="quiz-view">
+            <div class="progress-bar-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
 
-        <!-- Sección del Juego -->
-        <div id="quiz-container">
-            <h2 id="question-text">Cargando pregunta...</h2>
-            <div id="options-container"></div>
-            <p id="feedback" style="font-weight: bold; margin-top: 15px;"></p>
+            <div id="step-tag" class="step-tag">PREGUNTA 1 DE 3</div>
+            <h2 id="question-text" class="question-title">Cargando...</h2>
+
+            <div id="math-box" class="math-box"></div>
+
+            <div id="options-grid" class="options-grid"></div>
+
+            <div id="feedback" class="feedback-text"></div>
+
+            <button id="next-btn" class="action-btn hidden" onclick="siguienteAccion()">Siguiente 🚀</button>
         </div>
 
-        <!-- Sección del Final / Victoria -->
-        <div id="victory-container" class="hidden">
-            <div class="trophy">🏆✨</div>
-            <h2>¡FELICITACIONES, EXPLORADOR GALÁCTICO!</h2>
-            <p>Has completado con éxito todas las misiones del universo matemático.</p>
-            <p>¡Eres un verdadero Maestro del Espacio!</p>
-            <br>
-            <button class="option-btn" onclick="window.location.href='index.html'">Volver al Mapa Principal 🚀</button>
+        <!-- Vista de Finalización / Victoria -->
+        <div id="victory-view" class="hidden">
+            <div class="trophy-icon">🏆✨</div>
+            <h2 style="font-size: 24px; margin-bottom: 10px;">¡RECORRIDO COMPLETADO!</h2>
+            <p style="color: #a0aec0; margin-bottom: 25px;">Has dominado la última frontera espacial. ¡Felicidades, Cadete!</p>
+            <button class="action-btn" onclick="volverAlMapa()">Volver al Mapa Principal 🚀</button>
         </div>
+
     </div>
 
     <script src="script.js"></script>
     <script>
-        // Preguntas para el Recorrido Final 11
-        const preguntasMision11 = [
+        const preguntas = [
             {
-                pregunta: "1. Si una nave recorre 250 km y luego 350 km más, ¿cuántos km recorrió en total?",
-                opciones: ["500 km", "600 km", "550 km"],
+                tag: "PREGUNTA 1 DE 3",
+                progreso: "33%",
+                pregunta: "Si una nave recorre 250 km y luego 350 km más, ¿cuántos km recorrió en total?",
+                formula: "🛸 250 + 350 = <span class='red'>?</span>",
+                opciones: ["500 km", "600 km", "550 km", "650 km"],
                 correcta: 1
             },
             {
-                pregunta: "2. ¿Cuál es el resultado de repartir 12 estrellas entre 3 astronautas en partes iguales?",
-                opciones: ["4 estrellas", "3 estrellas", "6 estrellas"],
-                correcta: 0
+                tag: "PREGUNTA 2 DE 3",
+                progreso: "66%",
+                pregunta: "El radar detecta 3 hileras de 9 estrellas fugaces. ¿Cuántas estrellas fugaces hay en total?",
+                formula: "🌠 3 × 9 = <span class='red'>?</span>",
+                opciones: ["24 estrellas", "27 estrellas", "30 estrellas", "18 estrellas"],
+                correcta: 1
             },
             {
-                pregunta: "3. Redondea el número 48 a la decena más cercana:",
-                opciones: ["40", "45", "50"],
+                tag: "PREGUNTA 3 DE 3",
+                progreso: "100%",
+                pregunta: "Para completar el viaje, redondea el número 48 a la decena más cercana:",
+                formula: "🎯 48 ≈ <span class='red'>?</span>",
+                opciones: ["40", "45", "50", "60"],
                 correcta: 2
             }
         ];
 
-        let preguntaActual = 0;
+        let indice = 0;
+        let respondido = false;
 
         function cargarPregunta() {
-            const q = preguntasMision11[preguntaActual];
-            document.getElementById("question-text").innerText = q.pregunta;
-            const optionsDiv = document.getElementById("options-container");
-            optionsDiv.innerHTML = "";
+            respondido = false;
+            const q = preguntas[indice];
 
-            q.opciones.forEach((opcion, index) => {
+            document.getElementById("step-tag").innerText = q.tag;
+            document.getElementById("progress-bar").style.width = q.progreso;
+            document.getElementById("question-text").innerText = q.pregunta;
+            document.getElementById("math-box").innerHTML = q.formula;
+            document.getElementById("feedback").innerText = "";
+            document.getElementById("next-btn").classList.add("hidden");
+
+            const grid = document.getElementById("options-grid");
+            grid.innerHTML = "";
+
+            q.opciones.forEach((opcion, i) => {
                 const btn = document.createElement("button");
                 btn.className = "option-btn";
                 btn.innerText = opcion;
-                btn.onclick = () => verificarRespuesta(index);
-                optionsDiv.appendChild(btn);
+                btn.onclick = () => seleccionar(i, btn);
+                grid.appendChild(btn);
             });
-            document.getElementById("feedback").innerText = "";
         }
 
-        function verificarRespuesta(indiceSeleccionado) {
-            const q = preguntasMision11[preguntaActual];
-            if (indiceSeleccionado === q.correcta) {
-                document.getElementById("feedback").style.color = "green";
-                document.getElementById("feedback").innerText = "¡Correcto! 🚀";
-                setTimeout(() => {
-                    preguntaActual++;
-                    if (preguntaActual < preguntasMision11.length) {
-                        cargarPregunta();
-                    } else {
-                        mostrarVictoria();
-                    }
-                }, 1200);
+        function seleccionar(indexSeleccionado, elementoBtn) {
+            if (respondido) return;
+
+            const q = preguntas[indice];
+            const feedback = document.getElementById("feedback");
+            const nextBtn = document.getElementById("next-btn");
+
+            if (indexSeleccionado === q.correcta) {
+                respondido = true;
+                elementoBtn.classList.add("selected-correct");
+                feedback.innerText = "✨ ¡Brillante! Respuesta digna de un maestro espacial.";
+
+                if (indice === preguntas.length - 1) {
+                    nextBtn.innerText = "Completar Juego 🏆";
+                } else {
+                    nextBtn.innerText = "Siguiente Pregunta 🚀";
+                }
+                nextBtn.classList.remove("hidden");
             } else {
-                document.getElementById("feedback").style.color = "red";
-                document.getElementById("feedback").innerText = "Inténtalo de nuevo 😅";
+                feedback.style.color = "#ff3366";
+                feedback.innerText = "Coordenada incorrecta. ¡Inténtalo de nuevo! 🛸";
+                setTimeout(() => {
+                    feedback.style.color = "#00ff88";
+                    feedback.innerText = "";
+                }, 1500);
             }
         }
 
-        function mostrarVictoria() {
-            document.getElementById("quiz-container").classList.add("hidden");
-            document.getElementById("victory-container").classList.remove("hidden");
-            
-            // Marcar misión 11 como completada en localStorage si usas el script.js
-            let state = JSON.parse(localStorage.getItem("GAME_STATE")) || {};
-            if (!state.completedMissions) state.completedMissions = [];
-            if (!state.completedMissions.includes(11)) {
-                state.completedMissions.push(11);
+        function siguienteAccion() {
+            indice++;
+            if (indice < preguntas.length) {
+                cargarPregunta();
+            } else {
+                // Mostrar pantalla final
+                document.getElementById("quiz-view").classList.add("hidden");
+                document.getElementById("victory-view").classList.remove("hidden");
+                guardarProgreso();
             }
-            localStorage.setItem("GAME_STATE", JSON.stringify(state));
+        }
+
+        function guardarProgreso() {
+            try {
+                let state = JSON.parse(localStorage.getItem("GAME_STATE")) || {};
+                if (!state.completedMissions) state.completedMissions = [];
+                if (!state.completedMissions.includes(11)) state.completedMissions.push(11);
+                localStorage.setItem("GAME_STATE", JSON.stringify(state));
+            } catch (e) {
+                console.log("Progreso guardado");
+            }
+        }
+
+        // FUNCIÓN CLAVE: Redirige de regreso al Mapa o Inicio
+        function volverAlMapa() {
+            window.location.href = "index.html"; 
         }
 
         // Iniciar
