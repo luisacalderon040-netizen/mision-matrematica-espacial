@@ -1,1 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misión 11: Gran Recorrido Galáctico</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background-color: #4A90E2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .option-btn:hover {
+            background-color: #357ABD;
+        }
+        .hidden {
+            display: none;
+        }
+        .trophy {
+            font-size: 80px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
 
+    <div class="container">
+        <h1>👑 Misión 11: Gran Recorrido Galáctico</h1>
+        <p>¡Has llegado a la prueba final de la galaxia! Demuestra todo lo que has aprendido.</p>
+        
+        <hr>
+
+        <!-- Sección del Juego -->
+        <div id="quiz-container">
+            <h2 id="question-text">Cargando pregunta...</h2>
+            <div id="options-container"></div>
+            <p id="feedback" style="font-weight: bold; margin-top: 15px;"></p>
+        </div>
+
+        <!-- Sección del Final / Victoria -->
+        <div id="victory-container" class="hidden">
+            <div class="trophy">🏆✨</div>
+            <h2>¡FELICITACIONES, EXPLORADOR GALÁCTICO!</h2>
+            <p>Has completado con éxito todas las misiones del universo matemático.</p>
+            <p>¡Eres un verdadero Maestro del Espacio!</p>
+            <br>
+            <button class="option-btn" onclick="window.location.href='index.html'">Volver al Mapa Principal 🚀</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Preguntas para el Recorrido Final 11
+        const preguntasMision11 = [
+            {
+                pregunta: "1. Si una nave recorre 250 km y luego 350 km más, ¿cuántos km recorrió en total?",
+                opciones: ["500 km", "600 km", "550 km"],
+                correcta: 1
+            },
+            {
+                pregunta: "2. ¿Cuál es el resultado de repartir 12 estrellas entre 3 astronautas en partes iguales?",
+                opciones: ["4 estrellas", "3 estrellas", "6 estrellas"],
+                correcta: 0
+            },
+            {
+                pregunta: "3. Redondea el número 48 a la decena más cercana:",
+                opciones: ["40", "45", "50"],
+                correcta: 2
+            }
+        ];
+
+        let preguntaActual = 0;
+
+        function cargarPregunta() {
+            const q = preguntasMision11[preguntaActual];
+            document.getElementById("question-text").innerText = q.pregunta;
+            const optionsDiv = document.getElementById("options-container");
+            optionsDiv.innerHTML = "";
+
+            q.opciones.forEach((opcion, index) => {
+                const btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.innerText = opcion;
+                btn.onclick = () => verificarRespuesta(index);
+                optionsDiv.appendChild(btn);
+            });
+            document.getElementById("feedback").innerText = "";
+        }
+
+        function verificarRespuesta(indiceSeleccionado) {
+            const q = preguntasMision11[preguntaActual];
+            if (indiceSeleccionado === q.correcta) {
+                document.getElementById("feedback").style.color = "green";
+                document.getElementById("feedback").innerText = "¡Correcto! 🚀";
+                setTimeout(() => {
+                    preguntaActual++;
+                    if (preguntaActual < preguntasMision11.length) {
+                        cargarPregunta();
+                    } else {
+                        mostrarVictoria();
+                    }
+                }, 1200);
+            } else {
+                document.getElementById("feedback").style.color = "red";
+                document.getElementById("feedback").innerText = "Inténtalo de nuevo 😅";
+            }
+        }
+
+        function mostrarVictoria() {
+            document.getElementById("quiz-container").classList.add("hidden");
+            document.getElementById("victory-container").classList.remove("hidden");
+            
+            // Marcar misión 11 como completada en localStorage si usas el script.js
+            let state = JSON.parse(localStorage.getItem("GAME_STATE")) || {};
+            if (!state.completedMissions) state.completedMissions = [];
+            if (!state.completedMissions.includes(11)) {
+                state.completedMissions.push(11);
+            }
+            localStorage.setItem("GAME_STATE", JSON.stringify(state));
+        }
+
+        // Iniciar
+        cargarPregunta();
+    </script>
+</body>
+</html>
