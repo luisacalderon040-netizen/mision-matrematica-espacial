@@ -7,7 +7,7 @@ const PLANETAS_DATA = [
     { id: 1, name: "Conociendo los números", emoji: "🪐", page: "mission1.html" },
     { id: 2, name: "Explorando el conteo", emoji: "🔴", page: "mission2.html" },
     { id: 3, name: "Comparando planetas", emoji: "🟡", page: "mission3.html" },
-    { id: 4, name: "El valor posicional", emoji: "🟢", page: "#" },
+    { id: 4, name: "El valor posicional", emoji: "🟢", page: "mission4.html" },
     { id: 5, name: "Suma galáctica", emoji: "🔵", page: "#" },
     { id: 6, name: "Resta espacial", emoji: "🟣", page: "#" },
     { id: 7, name: "Multiplicación", emoji: "🟠", page: "#" },
