@@ -13,7 +13,7 @@ const PLANETAS_DATA = [
     { id: 7, name: "Multiplicación", emoji: "🟠", page: "mission7.html" },
     { id: 8, name: "División", emoji: "🟤", page: "mission8.html" },
     { id: 9, name: "Medidas y formas", emoji: "⚪", page: "mission9.html" },
-    { id: 10, name: "Desafío espacial", emoji: "🌟", page: "#" }
+    { id: 10, name: "Desafío final", emoji: "🌟", page: "mission10.html" },
 ];
 
 // Estado por defecto del jugador
