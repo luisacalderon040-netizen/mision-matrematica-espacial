@@ -1,0 +1,429 @@
+/* ========================================== */
+/* VARIABLES GLOBALES Y TEMA ESPACIAL         */
+/* ========================================== */
+:root {
+    --bg-dark: #0a0c1b;
+    --bg-space: #10142d;
+    --primary-cyan: #00f2ff;
+    --primary-purple: #7b2cbf;
+    --primary-violet: #9d4edd;
+    --accent-gold: #ffd166;
+    --accent-glow: rgba(0, 242, 255, 0.4);
+    --glass-bg: rgba(20, 26, 58, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    --text-light: #f8f9fa;
+    --text-muted: #a0aab8;
+    --font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* Reset Básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font-family);
+    user-select: none;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    background: radial-gradient(ellipse at bottom, #1a1c3b 0%, #080914 100%);
+}
+
+/* ========================================== */
+/* FONDO DE ESTRELLAS Y GALAXIA ANIMADO       */
+/* ========================================== */
+#stars-container, #stars2-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+#stars-container {
+    background: radial-gradient(2px 2px at 20px 30px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, rgba(0, 242, 255, 0.8), rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 90px 40px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 160px 120px, #9d4edd, rgba(0,0,0,0));
+    background-repeat: repeat;
+    background-size: 200px 200px;
+    opacity: 0.6;
+    animation: starsMove 100s linear infinite;
+}
+
+#stars2-container {
+    background: radial-gradient(1.5px 1.5px at 50px 160px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 130px 80px, #ffd166, rgba(0,0,0,0));
+    background-repeat: repeat;
+    background-size: 300px 300px;
+    opacity: 0.4;
+    animation: starsMove 150s linear infinite reverse;
+}
+
+@keyframes starsMove {
+    from { transform: translateY(0); }
+    to { transform: translateY(-1000px); }
+}
+
+/* Container Principal */
+.app-container {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Estilo Glassmorphism General */
+.glassmorphism {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: var(--glass-shadow);
+}
+
+/* Manejo de Pantallas */
+.screen {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+}
+
+.screen.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 1;
+}
+
+/* ========================================== */
+/* PANTALLA DE INICIO                         */
+/* ========================================== */
+.hero-card {
+    width: 100%;
+    max-width: 520px;
+    padding: 40px 30px;
+    text-align: center;
+    position: relative;
+    border: 1px solid rgba(0, 242, 255, 0.3);
+    box-shadow: 0 0 30px rgba(0, 242, 255, 0.15);
+}
+
+.space-ship-badge {
+    font-size: 3.5rem;
+    margin-bottom: 10px;
+    display: inline-block;
+    filter: drop-shadow(0 0 15px var(--primary-cyan));
+    animation: floatShip 3s ease-in-out infinite;
+}
+
+@keyframes floatShip {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(3deg); }
+}
+
+.game-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: var(--text-light);
+    text-transform: uppercase;
+    line-height: 1.2;
+}
+
+.game-title .highlight {
+    color: var(--primary-cyan);
+    text-shadow: 0 0 15px rgba(0, 242, 255, 0.6);
+}
+
+.game-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin: 12px 0 25px 0;
+    font-style: italic;
+}
+
+/* Perfil del Jugador */
+.player-profile-card {
+    background: rgba(10, 12, 27, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.avatar-selection .avatar-icon {
+    font-size: 2.2rem;
+    background: rgba(157, 78, 221, 0.2);
+    border: 1px solid var(--primary-violet);
+    padding: 10px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(157, 78, 221, 0.4);
+}
+
+.player-info {
+    flex: 1;
+    text-align: left;
+}
+
+.player-info label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--primary-cyan);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.player-info input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--primary-cyan);
+    color: var(--text-light);
+    font-size: 1.1rem;
+    font-weight: 600;
+    outline: none;
+    padding: 2px 0;
+}
+
+/* Barra de Estadísticas */
+.stats-summary-bar {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.stat-badge {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stat-badge .stat-icon {
+    margin-right: 5px;
+}
+
+/* Botones con estilo Neón */
+.btn-primary-space {
+    width: 100%;
+    background: linear-gradient(135deg, var(--primary-cyan), var(--primary-purple));
+    color: #fff;
+    border: none;
+    padding: 16px 24px;
+    border-radius: 16px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-primary-space:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 0 30px rgba(0, 242, 255, 0.7);
+}
+
+.btn-primary-space:active {
+    transform: translateY(1px);
+}
+
+.btn-secondary-space {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-light);
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary-space:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* ========================================== */
+/* PANTALLA MAPA DEL UNIVERSO                 */
+/* ========================================== */
+.map-view {
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.top-nav {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+    margin-bottom: 20px;
+}
+
+.user-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+}
+
+.nav-stats {
+    display: flex;
+    gap: 15px;
+}
+
+.stat-pill {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-weight: 600;
+}
+
+.section-title {
+    font-size: 1.8rem;
+    color: var(--primary-cyan);
+    text-shadow: 0 0 10px rgba(0, 242, 255, 0.4);
+}
+
+.section-subtitle {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 30px;
+}
+
+/* Rejilla de Planetas */
+.planets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
+    padding: 10px;
+}
+
+/* Tarjeta de Planeta */
+.planet-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.planet-card.unlocked {
+    border-color: var(--primary-cyan);
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+    cursor: pointer;
+}
+
+.planet-card.unlocked:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 0 30px rgba(0, 242, 255, 0.5);
+}
+
+.planet-card.locked {
+    opacity: 0.5;
+    filter: grayscale(80%);
+    cursor: not-allowed;
+}
+
+.planet-visual {
+    font-size: 3.5rem;
+    margin: 10px 0;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+}
+
+.planet-card.unlocked .planet-visual {
+    animation: pulsePlanet 4s ease-in-out infinite;
+}
+
+@keyframes pulsePlanet {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+}
+
+.planet-number {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--primary-cyan);
+    font-weight: 700;
+}
+
+.planet-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 5px 0 10px 0;
+}
+
+.planet-status-badge {
+    font-size: 0.8rem;
+    padding: 4px 10px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.planet-card.locked .planet-status-badge {
+    color: #ff4d4d;
+}
+
+.planet-card.unlocked .planet-status-badge {
+    color: #00ff88;
+}
+
+/* ========================================== */
+/* ADAPTACIÓN RESPONSIVA (CELULARES/TABLETS)   */
+/* ========================================== */
+@media (max-width: 768px) {
+    .hero-card {
+        padding: 25px 20px;
+    }
+
+    .game-title {
+        font-size: 1.7rem;
+    }
+
+    .top-nav {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .planets-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+    }
+
+    .planet-visual {
+        font-size: 2.8rem;
+    }
+}

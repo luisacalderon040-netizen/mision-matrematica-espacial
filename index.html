@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misión Matemática Espacial</title>
+    <!-- Estilos CSS del juego -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Fondo de Estrellas Animadas -->
+    <div id="stars-container"></div>
+    <div id="stars2-container"></div>
+
+    <div class="app-container">
+
+        <!-- ========================================== -->
+        <!-- PANTALLA PRINCIPAL / INICIO                -->
+        <!-- ========================================== -->
+        <section id="screen-welcome" class="screen active">
+            <div class="hero-card glassmorphism">
+                <div class="space-ship-badge">🚀</div>
+                <h1 class="game-title">MISIÓN MATEMÁTICA<br><span class="highlight">ESPACIAL</span></h1>
+                <p class="game-subtitle">"Explora el universo. Resuelve desafíos. Conquista las matemáticas."</p>
+
+                <!-- Perfil del Jugador -->
+                <div class="player-profile-card">
+                    <div class="avatar-selection">
+                        <span class="avatar-icon" id="player-avatar">👨‍🚀</span>
+                    </div>
+                    <div class="player-info">
+                        <label for="player-name-input">Nombre del Cadete Espacial:</label>
+                        <input type="text" id="player-name-input" value="Explorador" maxlength="15">
+                    </div>
+                </div>
+
+                <!-- Estadísticas Iniciales -->
+                <div class="stats-summary-bar">
+                    <div class="stat-badge">
+                        <span class="stat-icon">⭐</span>
+                        <span id="welcome-stars">0</span> Estrellas
+                    </div>
+                    <div class="stat-badge">
+                        <span class="stat-icon">🏆</span>
+                        <span id="welcome-points">0</span> Puntos
+                    </div>
+                </div>
+
+                <button id="btn-start" class="btn-primary-space">
+                    <span class="btn-text">COMENZAR AVENTURA</span>
+                    <span class="btn-icon">🚀</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- PANTALLA DEL MAPA DEL UNIVERSO             -->
+        <!-- ========================================== -->
+        <section id="screen-map" class="screen">
+            <!-- Barra Superior de Navegación del Mapa -->
+            <header class="top-nav glassmorphism">
+                <div class="user-pill">
+                    <span id="map-avatar">👨‍🚀</span>
+                    <span id="map-player-name">Explorador</span>
+                </div>
+                <div class="nav-stats">
+                    <div class="stat-pill">⭐ <span id="map-stars">0</span></div>
+                    <div class="stat-pill">🏆 <span id="map-points">0</span></div>
+                </div>
+                <button id="btn-reset-progress" class="btn-secondary-space" title="Reiniciar Progreso">
+                    🔄 Reiniciar
+                </button>
+            </header>
+
+            <main class="map-view">
+                <h2 class="section-title">🗺️ Mapa de Misiones Espaciales</h2>
+                <p class="section-subtitle">Selecciona un planeta para iniciar la misión</p>
+
+                <!-- Contenedor del Mapa con los Planetas -->
+                <div class="planets-grid" id="planets-container">
+                    <!-- Los planetas se generarán dinámicamente desde script.js -->
+                </div>
+            </main>
+        </section>
+
+    </div>
+
+    <!-- Script Principal JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
