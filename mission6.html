@@ -118,7 +118,7 @@
 
     <div class="app-container mission-container">
         
-        <!-- Encabezado de la Misión -->
+        <!-- Encabezado -->
         <header class="glassmorphism mission-header">
             <button id="btn-back" class="btn-secondary-space">⬅ Volver al Mapa</button>
             <div class="user-pill">🟣 Misión 6: Resta Espacial</div>
@@ -130,15 +130,13 @@
             <div id="progress-fill" class="progress-bar-fill"></div>
         </div>
 
-        <!-- Tarjeta Interactiva -->
+        <!-- Tarjeta de Pregunta -->
         <main class="glassmorphism question-card">
             <div class="planet-number" id="question-number">Pregunta 1 de 3</div>
-            <h2 class="question-text" id="question-text">Cargando desafío de resta espacial...</h2>
+            <h2 class="question-text" id="question-text">Cargando desafío espacial...</h2>
 
             <div class="visual-container" id="visual-container"></div>
-
             <div class="options-grid" id="options-container"></div>
-
             <div class="feedback-message" id="feedback"></div>
 
             <button id="btn-action" class="btn-primary-space" style="margin-top: 15px;">Comprobar Respuesta 🚀</button>
@@ -146,10 +144,10 @@
 
     </div>
 
-    <!-- Script global de audio y guardado -->
+    <!-- Scripts de la app -->
     <script src="script.js"></script>
 
-    <!-- Lógica de la Misión 6: Resta Espacial -->
+    <!-- Lógica del Juego (Misión 6: Resta Espacial) -->
     <script>
         const preguntas = [
             {
