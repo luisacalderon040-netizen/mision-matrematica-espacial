@@ -82,7 +82,7 @@
             transition: all 0.2s ease;
         }
 
-        .option-btn:hover {
+        .option-btn:hover:not(:disabled) {
             background: rgba(0, 242, 255, 0.15);
             border-color: var(--primary-cyan);
             transform: translateY(-2px);
@@ -92,6 +92,11 @@
             background: rgba(0, 242, 255, 0.3);
             border-color: var(--primary-cyan);
             box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
         }
 
         .feedback-message {
@@ -146,7 +151,6 @@
     </div>
 
     <script>
-        // Lógica de la Misión 4
         const preguntas = [
             {
                 texto: "En las coordenadas numéricas 7,392... ¿Qué valor representa el dígito 7?",
@@ -171,6 +175,7 @@
         let indicePregunta = 0;
         let opcionSeleccionada = null;
         let estrellasGanadas = 0;
+        let estrellasIniciales = 0;
 
         const elPreguntaNum = document.getElementById("question-number");
         const elPreguntaTexto = document.getElementById("question-text");
@@ -179,6 +184,24 @@
         const elFeedback = document.getElementById("feedback");
         const elBtnAction = document.getElementById("btn-action");
         const elProgress = document.getElementById("progress-fill");
+
+        // Cargar estado inicial de estrellas
+        function cargarEstadoInicial() {
+            try {
+                const saved = localStorage.getItem("GAME_STATE") || localStorage.getItem("MISION_ESPACIAL_DATA");
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    estrellasIniciales = parsed.stars || 0;
+                }
+            } catch(e) {
+                estrellasIniciales = 0;
+            }
+            actualizarMarcadorEstrellas();
+        }
+
+        function actualizarMarcadorEstrellas() {
+            document.getElementById("m-stars").textContent = estrellasIniciales + estrellasGanadas;
+        }
 
         function cargarPregunta() {
             opcionSeleccionada = null;
@@ -224,10 +247,13 @@
                 return;
             }
 
+            // Deshabilitar botones para evitar cambios tras comprobar
+            document.querySelectorAll(".option-btn").forEach(b => b.disabled = true);
+
             const p = preguntas[indicePregunta];
             if (opcionSeleccionada === p.correcta) {
                 estrellasGanadas++;
-                document.getElementById("m-stars").textContent = estrellasGanadas;
+                actualizarMarcadorEstrellas();
                 elFeedback.className = "feedback-message feedback-correct";
                 elFeedback.textContent = "✨ ¡Correcto! Posicionamiento estelar perfecto.";
             } else {
@@ -240,26 +266,40 @@
 
         function finalizarMision() {
             elProgress.style.width = "100%";
-            const data = JSON.parse(localStorage.getItem("MISION_ESPACIAL_DATA") || "{}");
+            
+            // Cargar datos previos
+            let data = { stars: 0, points: 0, completedMissions: [], unlockedMissions: [1] };
+            try {
+                const saved = localStorage.getItem("GAME_STATE") || localStorage.getItem("MISION_ESPACIAL_DATA");
+                if (saved) {
+                    data = Object.assign(data, JSON.parse(saved));
+                }
+            } catch(e) {}
+
+            // Actualizar datos
             data.stars = (data.stars || 0) + estrellasGanadas;
             data.points = (data.points || 0) + (estrellasGanadas * 50);
-            
+
             if (!data.completedMissions) data.completedMissions = [];
             if (!data.completedMissions.includes(4)) data.completedMissions.push(4);
 
-            if (!data.unlockedMissions) data.unlockedMissions = [1, 2, 3, 4];
+            if (!data.unlockedMissions) data.unlockedMissions = [1];
             if (!data.unlockedMissions.includes(5)) data.unlockedMissions.push(5);
 
-            localStorage.setItem("MISION_ESPACIAL_DATA", JSON.stringify(data));
+            // Guardar en ambas claves para mantener compatibilidad
+            const dataString = JSON.stringify(data);
+            localStorage.setItem("GAME_STATE", dataString);
+            localStorage.setItem("MISION_ESPACIAL_DATA", dataString);
 
             alert(`🎉 ¡Misión 4 Completada!\nHas ganado ${estrellasGanadas} estrellas y desbloqueado la Misión 5.`);
-            window.location.href = "./index.html";
+            window.location.href = "map.html";
         }
 
         document.getElementById("btn-back").addEventListener("click", () => {
-            window.location.href = "./index.html";
+            window.location.href = "map.html";
         });
 
+        cargarEstadoInicial();
         cargarPregunta();
     </script>
 </body>
