@@ -14,7 +14,7 @@ const PLANETAS_DATA = [
     { id: 8, name: "División", emoji: "🟤", page: "mission8.html" },
     { id: 9, name: "Medidas y formas", emoji: "⚪", page: "mission9.html" },
     { id: 10, name: "Desafío final", emoji: "🌟", page: "mission10.html" },
-    { id: 11, name: "Gran Recorrido Galáctico", emoji: "👑", page: "mission11.html" }
+    { id: 11, name: "Gran FINAL de Recorrido Galáctico", emoji: "👑", page: "mission11.html" }
 ];
 
 // Estado por defecto del jugador
