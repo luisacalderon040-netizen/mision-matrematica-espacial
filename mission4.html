@@ -107,35 +107,35 @@
 </head>
 <body>
 
-    
+    <!-- Fondo de Estrellas -->
     <div id="stars-container"></div>
     <div id="stars2-container"></div>
 
     <div class="app-container mission-container">
         
-    
+        <!-- Header de la Misión -->
         <header class="glassmorphism mission-header">
             <button id="btn-back" class="btn-secondary-space">⬅ Volver al Mapa</button>
             <div class="user-pill">🟢 Misión 4: El valor posicional</div>
             <div class="stat-pill">⭐ <span id="m-stars">0</span></div>
         </header>
 
-        
+        <!-- Barra de Progreso de la Misión -->
         <div class="progress-bar-container">
             <div id="progress-fill" class="progress-bar-fill"></div>
         </div>
 
-        
+        <!-- Tarjeta del Ejercicio -->
         <main class="glassmorphism question-card">
             <div class="planet-number" id="question-number">Pregunta 1 de 3</div>
             <h2 class="question-text" id="question-text">Cargando desafío espacial...</h2>
 
             <div class="visual-container" id="visual-container">
-            
+                <!-- Se mostrará el desafío gráfico -->
             </div>
 
             <div class="options-grid" id="options-container">
-             
+                <!-- Las opciones se generarán dinámicamente -->
             </div>
 
             <div class="feedback-message" id="feedback"></div>
@@ -146,7 +146,7 @@
     </div>
 
     <script>
-      
+        // Lógica de la Misión 4
         const preguntas = [
             {
                 texto: "En las coordenadas numéricas 7,392... ¿Qué valor representa el dígito 7?",
