@@ -6,334 +6,308 @@
     <title>Misión 10: Desafío Final</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .mission-container {
-            max-width: 800px;
-            margin: 0 auto;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0b0f26;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             padding: 20px;
         }
 
-        .mission-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding: 15px 25px;
+        .game-card {
+            background: #121838;
+            border: 1px solid #1e295d;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 650px;
+            width: 100%;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
         }
 
         .progress-bar-container {
             width: 100%;
-            height: 14px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+            height: 10px;
+            background-color: #1e2548;
+            border-radius: 20px;
+            margin-bottom: 25px;
             overflow: hidden;
-            margin: 20px 0;
-            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .progress-bar-fill {
+        .progress-bar {
             height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #ff007f, #00f2ff);
+            width: 33%;
+            background: linear-gradient(90deg, #ff007a, #00f0ff);
             transition: width 0.4s ease;
-            box-shadow: 0 0 12px #ff007f;
         }
 
-        .question-card {
-            padding: 30px;
-            margin-bottom: 20px;
-            text-align: center;
+        .step-tag {
+            color: #00f0ff;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
         }
 
-        .question-text {
-            font-size: 1.4rem;
-            margin-bottom: 20px;
+        .question-title {
+            font-size: 20px;
             font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.4;
         }
 
-        .visual-container {
-            font-size: 2rem;
-            margin: 20px 0;
-            padding: 15px;
+        .math-box {
             background: rgba(255, 255, 255, 0.03);
+            border: 1px dashed #2d386b;
             border-radius: 12px;
-            border: 1px dashed rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 25px;
             display: flex;
-            justify-content: center;
             align-items: center;
-            gap: 15px;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .math-box span.red {
+            color: #ff3366;
         }
 
         .options-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: 1fr 1fr;
             gap: 15px;
             margin-bottom: 20px;
         }
 
         .option-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
+            background: #182046;
+            border: 1px solid #2a366f;
+            color: #ffffff;
             padding: 15px;
-            border-radius: 14px;
-            font-size: 1.1rem;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
             transition: all 0.2s ease;
         }
 
         .option-btn:hover {
-            background: rgba(255, 0, 127, 0.2);
-            border-color: #ff007f;
-            transform: translateY(-2px);
+            background: #222d61;
+            border-color: #00f0ff;
         }
 
-        .option-btn.selected {
-            background: rgba(255, 0, 127, 0.4);
-            border-color: #ff007f;
-            box-shadow: 0 0 15px rgba(255, 0, 127, 0.5);
+        .option-btn.selected-correct {
+            background: #800e58;
+            border: 2px solid #ff007a;
+            box-shadow: 0 0 15px rgba(255, 0, 122, 0.4);
         }
 
-        .feedback-message {
-            min-height: 30px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin: 15px 0;
-        }
-
-        .feedback-correct {
+        .feedback-text {
             color: #00ff88;
-            text-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            min-height: 22px;
         }
 
-        .feedback-wrong {
-            color: #ff4d4d;
-            text-shadow: 0 0 8px rgba(255, 77, 77, 0.5);
+        .action-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(90deg, #00f0ff, #7b2cbf);
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+            transition: transform 0.2s ease, opacity 0.2s ease;
         }
 
-        /* Modal / Pantalla Final */
-        .final-screen {
-            display: none;
-            padding: 40px 20px;
-            text-align: center;
-            animation: fadeIn 0.8s ease;
+        .action-btn:hover {
+            transform: scale(1.01);
+            opacity: 0.95;
         }
 
-        .final-title {
-            font-size: 2.2rem;
-            color: #00f2ff;
-            text-shadow: 0 0 15px #00f2ff;
-            margin-bottom: 15px;
-        }
-
-        .final-subtitle {
-            font-size: 1.2rem;
-            line-height: 1.6;
-            margin-bottom: 25px;
-            color: #e0e0e0;
+        .hidden {
+            display: none !important;
         }
 
         .trophy-icon {
-            font-size: 4.5rem;
-            margin: 15px 0;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
+            font-size: 70px;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
 
-    <div id="stars-container"></div>
-    <div id="stars2-container"></div>
-
-    <div class="app-container mission-container">
+    <div class="game-card">
         
-        <!-- Encabezado -->
-        <header class="glassmorphism mission-header">
-            <button id="btn-back" class="btn-secondary-space">⬅ Volver al Mapa</button>
-            <div class="user-pill">🌟 Misión 10: Desafío Final</div>
-            <div class="stat-pill">⭐ <span id="m-stars">0</span></div>
-        </header>
+        <!-- Vista del Quiz (Misión 10) -->
+        <div id="quiz-view">
+            <div class="progress-bar-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
 
-        <!-- Barra de Progreso -->
-        <div class="progress-bar-container" id="p-bar-box">
-            <div id="progress-fill" class="progress-bar-fill"></div>
+            <div id="step-tag" class="step-tag">PREGUNTA 1 DE 3</div>
+            <h2 id="question-text" class="question-title">Cargando...</h2>
+
+            <div id="math-box" class="math-box"></div>
+
+            <div id="options-grid" class="options-grid"></div>
+
+            <div id="feedback" class="feedback-text"></div>
+
+            <button id="next-btn" class="action-btn hidden" onclick="siguienteAccion()">Siguiente 🚀</button>
         </div>
 
-        <!-- Tarjeta de Pregunta -->
-        <main class="glassmorphism question-card" id="game-card">
-            <div class="planet-number" id="question-number">Pregunta 1 de 3</div>
-            <h2 class="question-text" id="question-text">Cargando desafío maestro...</h2>
-
-            <div class="visual-container" id="visual-container"></div>
-            <div class="options-grid" id="options-container"></div>
-            <div class="feedback-message" id="feedback"></div>
-
-            <button id="btn-action" class="btn-primary-space" style="margin-top: 15px;">Comprobar Respuesta 🚀</button>
-        </main>
-
-        <!-- Pantalla de Agradecimiento y Finalización -->
-        <div class="glassmorphism final-screen" id="final-card">
-            <div class="trophy-icon">🏆✨</div>
-            <h1 class="final-title">¡¡FELICIDADES, COMANDANTE!!</h1>
-            <p class="final-subtitle">
-                Has completado exitosamente todas las misiones del mapa del conocimiento.<br>
-                ¡El universo de las matemáticas ya no tiene secretos para ti! 🌌🚀
-            </p>
-            <blockquote style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 25px; border-left: 4px solid #00f2ff;">
-                💖 <strong>¡Gracias por jugar!</strong> Eres genial, vuelve pronto para seguir explorando las estrellas. ✨🏻
-            </blockquote>
-            <button id="btn-finish-map" class="btn-primary-space">Volver al Mapa Principal 🗺️</button>
+        <!-- Pantalla de Victoria Misión 10 -> Enlace a Misión 11 -->
+        <div id="victory-view" class="hidden">
+            <div class="trophy-icon">🌟👑</div>
+            <h2 style="font-size: 24px; margin-bottom: 10px;">¡MISIÓ N 10 SUPERADA!</h2>
+            <p style="color: #a0aec0; margin-bottom: 25px;">Has demostrado un gran dominio espacial. ¡Has desbloqueado el Gran Recorrido Final!</p>
+            
+            <button class="action-btn" onclick="irAMision11()">Ir a Misión 11: Gran Recorrido 👑</button>
         </div>
 
     </div>
 
-    <!-- Script global -->
     <script src="script.js"></script>
-
-    <!-- Lógica de la Misión 10: Desafío Final -->
     <script>
-        const preguntas = [
+        const preguntasMision10 = [
             {
-                texto: "¡Desafío Combinado! Una nave lleva 4 contenedores con 12 repuestos cada uno. Si regala 10 repuestos a otra estación, ¿cuántos le quedan?",
-                visual: "🛸 (4 × 12) − 10 = ❓",
-                opciones: ["38 repuestos", "48 repuestos", "36 repuestos", "40 repuestos"],
-                correcta: 0
+                tag: "PREGUNTA 1 DE 3",
+                progreso: "33%",
+                pregunta: "Si tu nave recolecta 15 cristales solares y regalas 7, ¿cuántos cristales te quedan?",
+                formula: "💎 15 - 7 = <span class='red'>?</span>",
+                opciones: ["6 cristales", "8 cristales", "9 cristales", "7 cristales"],
+                correcta: 1
             },
             {
-                texto: "Para activar el hiperimpulsor se requieren 300 unidades de energía divididas equitativamente entre 6 generadores. ¿Cuánta energía necesita cada uno?",
-                visual: "⚡ 300 ÷ 6 = ❓",
-                opciones: ["60 unidades", "40 unidades", "50 unidades", "55 unidades"],
+                tag: "PREGUNTA 2 DE 3",
+                progreso: "66%",
+                pregunta: "Una estación espacial consume 40 unidades de energía cada hora. ¿Cuánta energía consume en 2 horas?",
+                formula: "⚡ 40 × 2 = <span class='red'>?</span>",
+                opciones: ["60 unidades", "70 unidades", "80 unidades", "100 unidades"],
                 correcta: 2
             },
             {
-                texto: "El radar detecta 3 hileras de 9 estrellas fugaces. ¿Cuántas estrellas fugaces hay en total?",
-                visual: "🌠 3 × 9 = ❓",
-                opciones: ["24 estrellas", "27 estrellas", "30 estrellas", "18 estrellas"],
-                correcta: 1
+                tag: "PREGUNTA 3 DE 3",
+                progreso: "100%",
+                pregunta: "Tienes 20 satélites y los organizas en 4 grupos iguales. ¿Cuántos satélites hay por grupo?",
+                formula: "🛰️ 20 ÷ 4 = <span class='red'>?</span>",
+                opciones: ["5 satélites", "4 satélites", "6 satélites", "10 satélites"],
+                correcta: 0
             }
         ];
 
-        let indicePregunta = 0;
-        let opcionSeleccionada = null;
-        let estrellasGanadas = 0;
-
-        const elPreguntaNum = document.getElementById("question-number");
-        const elPreguntaTexto = document.getElementById("question-text");
-        const elVisual = document.getElementById("visual-container");
-        const elOpciones = document.getElementById("options-container");
-        const elFeedback = document.getElementById("feedback");
-        const elBtnAction = document.getElementById("btn-action");
-        const elProgress = document.getElementById("progress-fill");
+        let indice = 0;
+        let respondido = false;
 
         function cargarPregunta() {
-            opcionSeleccionada = null;
-            elFeedback.textContent = "";
-            elBtnAction.textContent = "Comprobar Respuesta 🚀";
+            respondido = false;
+            const q = preguntasMision10[indice];
 
-            const p = preguntas[indicePregunta];
-            elPreguntaNum.textContent = `Pregunta ${indicePregunta + 1} de ${preguntas.length}`;
-            elPreguntaTexto.textContent = p.texto;
-            elVisual.textContent = p.visual;
-            elProgress.style.width = `${((indicePregunta) / preguntas.length) * 100}%`;
+            document.getElementById("step-tag").innerText = q.tag;
+            document.getElementById("progress-bar").style.width = q.progreso;
+            document.getElementById("question-text").innerText = q.pregunta;
+            document.getElementById("math-box").innerHTML = q.formula;
+            document.getElementById("feedback").innerText = "";
+            document.getElementById("next-btn").classList.add("hidden");
 
-            elOpciones.innerHTML = "";
-            p.opciones.forEach((op, idx) => {
+            const grid = document.getElementById("options-grid");
+            grid.innerHTML = "";
+
+            q.opciones.forEach((opcion, i) => {
                 const btn = document.createElement("button");
                 btn.className = "option-btn";
-                btn.textContent = op;
-                btn.onclick = () => seleccionarOpcion(idx, btn);
-                elOpciones.appendChild(btn);
+                btn.innerText = opcion;
+                btn.onclick = () => seleccionar(i, btn);
+                grid.appendChild(btn);
             });
         }
 
-        function seleccionarOpcion(index, element) {
-            document.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
-            element.classList.add("selected");
-            opcionSeleccionada = index;
-        }
+        function seleccionar(indexSeleccionado, elementoBtn) {
+            if (respondido) return;
 
-        elBtnAction.addEventListener("click", () => {
-            if (elBtnAction.textContent.includes("Siguiente") || elBtnAction.textContent.includes("Finalizar")) {
-                indicePregunta++;
-                if (indicePregunta < preguntas.length) {
-                    cargarPregunta();
+            const q = preguntasMision10[indice];
+            const feedback = document.getElementById("feedback");
+            const nextBtn = document.getElementById("next-btn");
+
+            if (indexSeleccionado === q.correcta) {
+                respondido = true;
+                elementoBtn.classList.add("selected-correct");
+                feedback.innerText = "✨ ¡Excelente cálculo, Cadete!";
+
+                if (indice === preguntasMision10.length - 1) {
+                    nextBtn.innerText = "Completar Desafío 10 🌟";
                 } else {
-                    finalizarMision();
+                    nextBtn.innerText = "Siguiente Pregunta 🚀";
                 }
-                return;
-            }
-
-            if (opcionSeleccionada === null) {
-                elFeedback.className = "feedback-message feedback-wrong";
-                elFeedback.textContent = "¡Selecciona una respuesta primero!";
-                if (window.sounds) window.sounds.playWrong();
-                return;
-            }
-
-            const p = preguntas[indicePregunta];
-            if (opcionSeleccionada === p.correcta) {
-                estrellasGanadas++;
-                document.getElementById("m-stars").textContent = estrellasGanadas;
-                elFeedback.className = "feedback-message feedback-correct";
-                elFeedback.textContent = "✨ ¡Brillante! Respuesta digna de un maestro espacial.";
-                if (window.sounds) window.sounds.playCorrect();
+                nextBtn.classList.remove("hidden");
             } else {
-                elFeedback.className = "feedback-message feedback-wrong";
-                elFeedback.textContent = "❌ Casi, ¡revisa tus cuentas para la próxima!";
-                if (window.sounds) window.sounds.playWrong();
+                feedback.style.color = "#ff3366";
+                feedback.innerText = "Cálculo incorrecto. ¡Inténtalo de nuevo! 🛸";
+                setTimeout(() => {
+                    feedback.style.color = "#00ff88";
+                    feedback.innerText = "";
+                }, 1500);
             }
-
-            elBtnAction.textContent = (indicePregunta + 1 < preguntas.length) ? "Siguiente Pregunta ➡" : "Completar Juego 🏆";
-        });
-
-        function finalizarMision() {
-            elProgress.style.width = "100%";
-            if (window.sounds) window.sounds.playVictory();
-
-            let data = {};
-            try {
-                data = JSON.parse(localStorage.getItem("MISION_ESPACIAL_DATA") || "{}");
-            } catch (e) {
-                console.warn("Error leyendo localStorage:", e);
-            }
-
-            data.stars = (data.stars || 0) + estrellasGanadas;
-            data.points = (data.points || 0) + (estrellasGanadas * 50);
-            
-            if (!data.completedMissions) data.completedMissions = [];
-            if (!data.completedMissions.includes(10)) data.completedMissions.push(10);
-
-            if (!data.unlockedMissions) data.unlockedMissions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-            try {
-                localStorage.setItem("MISION_ESPACIAL_DATA", JSON.stringify(data));
-            } catch (e) {
-                console.warn("Error guardando localStorage:", e);
-            }
-
-            // Ocultar juego y mostrar pantalla final bonita
-            document.getElementById("game-card").style.display = "none";
-            document.getElementById("p-bar-box").style.display = "none";
-            document.getElementById("final-card").style.display = "block";
         }
 
-        document.getElementById("btn-back").addEventListener("click", () => {
-            window.location.href = "index.html";
-        });
+        function siguienteAccion() {
+            indice++;
+            if (indice < preguntasMision10.length) {
+                cargarPregunta();
+            } else {
+                // Completar Misión 10 y desbloquear la 11
+                guardarYDesbloquearMision11();
+                document.getElementById("quiz-view").classList.add("hidden");
+                document.getElementById("victory-view").classList.remove("hidden");
+            }
+        }
 
-        document.getElementById("btn-finish-map").addEventListener("click", () => {
-            window.location.href = "index.html";
-        });
+        function guardarYDesbloquearMision11() {
+            try {
+                let state = JSON.parse(localStorage.getItem("GAME_STATE")) || {};
+                
+                if (!state.completedMissions) state.completedMissions = [];
+                if (!state.unlockedMissions) state.unlockedMissions = [1];
 
+                // Marcar Misión 10 como completada
+                if (!state.completedMissions.includes(10)) {
+                    state.completedMissions.push(10);
+                }
+
+                // DESBLOQUEAR MISIÓ N 11
+                if (!state.unlockedMissions.includes(11)) {
+                    state.unlockedMissions.push(11);
+                }
+
+                localStorage.setItem("GAME_STATE", JSON.stringify(state));
+            } catch (e) {
+                console.log("Misión 11 desbloqueada en memoria local");
+            }
+        }
+
+        // REDIRECCIÓ N A LA MISIÓ N 11
+        function irAMision11() {
+            window.location.href = "mission11.html";
+        }
+
+        // Cargar primera pregunta al entrar
         cargarPregunta();
     </script>
 </body>
