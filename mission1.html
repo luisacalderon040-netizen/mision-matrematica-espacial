@@ -120,7 +120,8 @@
         
         <!-- Header de la Misión -->
         <header class="glassmorphism mission-header">
-            <button id="btn-back" class="btn-secondary-space">⬅ Volver al Inicio</button>
+            <!-- BOTÓN DIRIGIDO AL MAPA EN EL HTML -->
+            <button id="btn-back" class="btn-secondary-space">🗺️ Volver al Mapa</button>
             <div class="user-pill">🪐 Misión 1: Conociendo los números</div>
             <div class="stat-pill">⭐ <span id="m-stars">0</span></div>
         </header>
@@ -234,7 +235,7 @@
         function finalizarMision() {
             elProgress.style.width = "100%";
             
-            // Cargar estado previo de ambas llaves por compatibilidad
+            // Cargar estado previo
             let data = {};
             try {
                 const saved = localStorage.getItem("GAME_STATE") || localStorage.getItem("MISION_ESPACIAL_DATA");
@@ -244,24 +245,27 @@
             data.stars = (data.stars || 0) + estrellasGanadas;
             data.points = (data.points || 0) + (estrellasGanadas * 50);
             
+            // Marcar Misión 1 completada
             if (!data.completedMissions) data.completedMissions = [];
             if (!data.completedMissions.includes(1)) data.completedMissions.push(1);
 
+            // Desbloquear Misión 2
             if (!data.unlockedMissions) data.unlockedMissions = [1];
             if (!data.unlockedMissions.includes(2)) data.unlockedMissions.push(2);
 
-            // Guardar sincronizado
+            // Guardar progreso
             localStorage.setItem("MISION_ESPACIAL_DATA", JSON.stringify(data));
             localStorage.setItem("GAME_STATE", JSON.stringify(data));
 
             alert(`🎉 ¡Misión Completada!\nHas ganado ${estrellasGanadas} estrellas.`);
             
-            // Si tienes un archivo para la Misión 2 pasa directamente a él:
-            window.location.href = "mission2.html";
+            // 📍 REDIRECCIÓN AL FINALIZAR: Va a map.html
+            window.location.href = "map.html";
         }
 
+        // 📍 REDIRECCIÓN AL HACER CLIC EN EL BOTÓN "VOLVER AL MAPA": Va a map.html
         document.getElementById("btn-back").addEventListener("click", () => {
-            window.location.href = "index.html";
+            window.location.href = "map.html";
         });
 
         cargarPregunta();
