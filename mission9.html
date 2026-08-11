@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misión 9: Medidas y Formas</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .mission-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .mission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 15px 25px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00f2ff, #7000ff);
+            transition: width 0.4s ease;
+            box-shadow: 0 0 10px #00f2ff;
+        }
+
+        .question-card {
+            padding: 30px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .question-text {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .visual-container {
+            font-size: 2rem;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 15px;
+            border-radius: 14px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover {
+            background: rgba(0, 242, 255, 0.15);
+            border-color: #00f2ff;
+            transform: translateY(-2px);
+        }
+
+        .option-btn.selected {
+            background: rgba(0, 242, 255, 0.3);
+            border-color: #00f2ff;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+        }
+
+        .feedback-message {
+            min-height: 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 15px 0;
+        }
+
+        .feedback-correct {
+            color: #00ff88;
+            text-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+        }
+
+        .feedback-wrong {
+            color: #ff4d4d;
+            text-shadow: 0 0 8px rgba(255, 77, 77, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="stars-container"></div>
+    <div id="stars2-container"></div>
+
+    <div class="app-container mission-container">
+        
+        <!-- Encabezado -->
+        <header class="glassmorphism mission-header">
+            <button id="btn-back" class="btn-secondary-space">⬅ Volver al Mapa</button>
+            <div class="user-pill">⚪ Misión 9: Medidas y Formas</div>
+            <div class="stat-pill">⭐ <span id="m-stars">0</span></div>
+        </header>
+
+        <!-- Barra de Progreso -->
+        <div class="progress-bar-container">
+            <div id="progress-fill" class="progress-bar-fill"></div>
+        </div>
+
+        <!-- Tarjeta de Pregunta -->
+        <main class="glassmorphism question-card">
+            <div class="planet-number" id="question-number">Pregunta 1 de 3</div>
+            <h2 class="question-text" id="question-text">Cargando desafío espacial...</h2>
+
+            <div class="visual-container" id="visual-container"></div>
+            <div class="options-grid" id="options-container"></div>
+            <div class="feedback-message" id="feedback"></div>
+
+            <button id="btn-action" class="btn-primary-space" style="margin-top: 15px;">Comprobar Respuesta 🚀</button>
+        </main>
+
+    </div>
+
+    <!-- Script global -->
+    <script src="script.js"></script>
+
+    <!-- Lógica de la Misión 9: Medidas y Formas -->
+    <script>
+        const preguntas = [
+            {
+                texto: "El panel solar de la base espacial tiene forma rectangular, con 8 metros de largo y 5 metros de ancho. ¿Cuál es su perímetro?",
+                visual: "📐 (8 m + 5 m) × 2 = ❓",
+                opciones: ["26 metros", "40 metros", "20 metros", "30 metros"],
+                correcta: 0
+            },
+            {
+                texto: "Una nave espacial necesita recorrer 3 kilómetros para llegar a la plataforma de despegue. ¿A cuántos metros equivale esa distancia?",
+                visual: "🚀 3 km = ❓ metros",
+                opciones: ["300 m", "3,000 m", "30,000 m", "30 m"],
+                correcta: 1
+            },
+            {
+                texto: "¿Qué figura geométrica tridimensional representa mejor la forma de un planeta?",
+                visual: "🪐 📐 = ❓",
+                opciones: ["Círculo", "Cilindro", "Esfera", "Cubo"],
+                correcta: 2
+            }
+        ];
+
+        let indicePregunta = 0;
+        let opcionSeleccionada = null;
+        let estrellasGanadas = 0;
+
+        const elPreguntaNum = document.getElementById("question-number");
+        const elPreguntaTexto = document.getElementById("question-text");
+        const elVisual = document.getElementById("visual-container");
+        const elOpciones = document.getElementById("options-container");
+        const elFeedback = document.getElementById("feedback");
+        const elBtnAction = document.getElementById("btn-action");
+        const elProgress = document.getElementById("progress-fill");
+
+        function cargarPregunta() {
+            opcionSeleccionada = null;
+            elFeedback.textContent = "";
+            elBtnAction.textContent = "Comprobar Respuesta 🚀";
+
+            const p = preguntas[indicePregunta];
+            elPreguntaNum.textContent = `Pregunta ${indicePregunta + 1} de ${preguntas.length}`;
+            elPreguntaTexto.textContent = p.texto;
+            elVisual.textContent = p.visual;
+            elProgress.style.width = `${((indicePregunta) / preguntas.length) * 100}%`;
+
+            elOpciones.innerHTML = "";
+            p.opciones.forEach((op, idx) => {
+                const btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.textContent = op;
+                btn.onclick = () => seleccionarOpcion(idx, btn);
+                elOpciones.appendChild(btn);
+            });
+        }
+
+        function seleccionarOpcion(index, element) {
+            document.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
+            element.classList.add("selected");
+            opcionSeleccionada = index;
+        }
+
+        elBtnAction.addEventListener("click", () => {
+            if (elBtnAction.textContent.includes("Siguiente") || elBtnAction.textContent.includes("Finalizar")) {
+                indicePregunta++;
+                if (indicePregunta < preguntas.length) {
+                    cargarPregunta();
+                } else {
+                    finalizarMision();
+                }
+                return;
+            }
+
+            if (opcionSeleccionada === null) {
+                elFeedback.className = "feedback-message feedback-wrong";
+                elFeedback.textContent = "¡Selecciona una respuesta primero!";
+                if (window.sounds) window.sounds.playWrong();
+                return;
+            }
+
+            const p = preguntas[indicePregunta];
+            if (opcionSeleccionada === p.correcta) {
+                estrellasGanadas++;
+                document.getElementById("m-stars").textContent = estrellasGanadas;
+                elFeedback.className = "feedback-message feedback-correct";
+                elFeedback.textContent = "✨ ¡Correcto! Cálculo de medida exacto.";
+                if (window.sounds) window.sounds.playCorrect();
+            } else {
+                elFeedback.className = "feedback-message feedback-wrong";
+                elFeedback.textContent = "❌ Incorrecto. ¡Revisa bien las medidas!";
+                if (window.sounds) window.sounds.playWrong();
+            }
+
+            elBtnAction.textContent = (indicePregunta + 1 < preguntas.length) ? "Siguiente Pregunta ➡" : "Finalizar Misión 🏆";
+        });
+
+        function finalizarMision() {
+            elProgress.style.width = "100%";
+            if (window.sounds) window.sounds.playVictory();
+
+            let data = {};
+            try {
+                data = JSON.parse(localStorage.getItem("MISION_ESPACIAL_DATA") || "{}");
+            } catch (e) {
+                console.warn("Error leyendo localStorage:", e);
+            }
+
+            data.stars = (data.stars || 0) + estrellasGanadas;
+            data.points = (data.points || 0) + (estrellasGanadas * 50);
+            
+            if (!data.completedMissions) data.completedMissions = [];
+            if (!data.completedMissions.includes(9)) data.completedMissions.push(9);
+
+            if (!data.unlockedMissions) data.unlockedMissions = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+            if (!data.unlockedMissions.includes(10)) data.unlockedMissions.push(10);
+
+            try {
+                localStorage.setItem("MISION_ESPACIAL_DATA", JSON.stringify(data));
+            } catch (e) {
+                console.warn("Error guardando localStorage:", e);
+            }
+
+            alert(`🎉 ¡Misión 9 Completada!\nHas ganado ${estrellasGanadas} estrellas y desbloqueado el Desafío Espacial Final (Misión 10).`);
+            window.location.href = "index.html";
+        }
+
+        document.getElementById("btn-back").addEventListener("click", () => {
+            window.location.href = "index.html";
+        });
+
+        cargarPregunta();
+    </script>
+</body>
+</html>
