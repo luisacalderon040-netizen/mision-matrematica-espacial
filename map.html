@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de Misiones Espaciales</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0b0f26;
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .map-container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(18, 24, 56, 0.8);
+            border: 1px solid #1e295d;
+            padding: 15px 25px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .stats-badge {
+            background: #182046;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: flex;
+            gap: 15px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #00f0ff;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .grid-planets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .planet-card {
+            background: #121838;
+            border: 2px solid #1e295d;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .planet-card.unlocked {
+            border-color: #00f0ff;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+
+        .planet-card.unlocked:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.4);
+            background: #182046;
+        }
+
+        .planet-card.locked {
+            opacity: 0.5;
+            filter: grayscale(80%);
+            cursor: not-allowed;
+        }
+
+        .planet-emoji {
+            font-size: 45px;
+            margin-bottom: 10px;
+        }
+
+        .planet-title {
+            font-size: 1.05rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .status-tag {
+            font-size: 0.8rem;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .tag-unlocked { background: rgba(0, 240, 255, 0.2); color: #00f0ff; }
+        .tag-completed { background: rgba(0, 255, 136, 0.2); color: #00ff88; }
+        .tag-locked { background: rgba(255, 255, 255, 0.1); color: #a0aec0; }
+
+        .btn-restart {
+            background: rgba(255, 77, 77, 0.2);
+            color: #ff4d4d;
+            border: 1px solid #ff4d4d;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="map-container">
+        <header>
+            <div class="user-info">
+                👨‍🚀 Cadete: <span id="display-name">Explorador</span>
+            </div>
+            <div class="stats-badge">
+                <span>⭐ <span id="display-stars">0</span></span>
+                <span>🏆 <span id="display-points">0</span></span>
+            </div>
+        </header>
+
+        <h2>🗺️ MAPA DEL RECORRIDO GALÁCTICO</h2>
+
+        <div class="grid-planets" id="planets-grid">
+            <!-- Los planetas se renderizan dinámicamente -->
+        </div>
+
+        <div style="text-align: center;">
+            <button class="btn-restart" id="btn-logout">⚙️ Cambiar de Cadete / Salir</button>
+        </div>
+    </div>
+
+    <script>
+        const PLANETAS_DATA = [
+            { id: 1, name: "Conociendo los números", emoji: "🪐", page: "mission1.html" },
+            { id: 2, name: "Explorando el conteo", emoji: "🔴", page: "mission2.html" },
+            { id: 3, name: "Comparando planetas", emoji: "🟡", page: "mission3.html" },
+            { id: 4, name: "El valor posicional", emoji: "🟢", page: "mission4.html" },
+            { id: 5, name: "Comparación y Redondeo", emoji: "🔴", page: "mission5.html" },
+            { id: 6, name: "Resta espacial", emoji: "🟣", page: "mission6.html" },
+            { id: 7, name: "Multiplicación", emoji: "🟠", page: "mission7.html" },
+            { id: 8, name: "División", emoji: "🟤", page: "mission8.html" },
+            { id: 9, name: "Medidas y formas", emoji: "⚪", page: "mission9.html" },
+            { id: 10, name: "Desafío final", emoji: "🌠", page: "mission10.html" },
+            { id: 11, name: "Gran FINAL de Recorrido Galáctico", emoji: "👑", page: "mission11.html" }
+        ];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Cargar datos del estado
+            let state = { playerName: "Explorador", stars: 0, points: 0, unlockedMissions: [1], completedMissions: [] };
+            try {
+                const saved = localStorage.getItem("GAME_STATE") || localStorage.getItem("MISION_ESPACIAL_DATA");
+                if (saved) state = JSON.parse(saved);
+            } catch(e) {}
+
+            document.getElementById("display-name").textContent = state.playerName || state.username || "Explorador";
+            document.getElementById("display-stars").textContent = state.stars || 0;
+            document.getElementById("display-points").textContent = state.points || 0;
+
+            const grid = document.getElementById("planets-grid");
+            grid.innerHTML = "";
+
+            const unlocked = state.unlockedMissions || [1];
+            const completed = state.completedMissions || [];
+
+            PLANETAS_DATA.forEach(p => {
+                const isUnlocked = unlocked.includes(p.id);
+                const isCompleted = completed.includes(p.id);
+
+                const card = document.createElement("div");
+                card.className = `planet-card ${isUnlocked ? 'unlocked' : 'locked'}`;
+
+                let tagHtml = `<span class="status-tag tag-locked">🔒 Bloqueado</span>`;
+                if (isCompleted) {
+                    tagHtml = `<span class="status-tag tag-completed">✅ Completado</span>`;
+                } else if (isUnlocked) {
+                    tagHtml = `<span class="status-tag tag-unlocked">🚀 Disponible</span>`;
+                }
+
+                card.innerHTML = `
+                    <div class="planet-emoji">${p.emoji}</div>
+                    <div class="planet-title">Misión ${p.id}: ${p.name}</div>
+                    ${tagHtml}
+                `;
+
+                if (isUnlocked) {
+                    card.addEventListener("click", () => {
+                        window.location.href = p.page;
+                    });
+                }
+
+                grid.appendChild(card);
+            });
+
+            document.getElementById("btn-logout").addEventListener("click", () => {
+                window.location.href = "index.html";
+            });
+        });
+    </script>
+</body>
+</html>
