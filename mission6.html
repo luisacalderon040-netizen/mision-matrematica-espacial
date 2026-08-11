@@ -161,14 +161,12 @@
             elPreguntaNum.textContent = `Paso ${aciertos + 1} de ${totalParaGanar}`;
             elProgress.style.width = `${(aciertos / totalParaGanar) * 100}%`;
 
-            // Se genera num1 siempre mayor o igual a num2 para evitar restas con resultados negativos
             num1 = Math.floor(Math.random() * 20) + 5;
             num2 = Math.floor(Math.random() * num1) + 1;
             respuestaCorrecta = num1 - num2;
 
             elProblem.textContent = `${num1} - ${num2}`;
 
-            // Crear opciones (1 correcta y 3 falsas)
             let opciones = new Set([respuestaCorrecta]);
             while (opciones.size < 4) {
                 let desvio = Math.floor(Math.random() * 7) - 3;
@@ -217,35 +215,51 @@
         }
 
         function finalizarMision() {
-            // Cargar estado previo exacto
-            let data = {};
+            // Objeto base asegurando que contenga un arreglo previo
+            let data = {
+                stars: 0,
+                points: 0,
+                completedMissions: [],
+                unlockedMissions: [1]
+            };
+
             try {
+                // Recuperar y fusionar los datos almacenados
                 const saved = localStorage.getItem("GAME_STATE") || localStorage.getItem("MISION_ESPACIAL_DATA");
-                if (saved) data = JSON.parse(saved);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    data = Object.assign(data, parsed);
+                }
             } catch(e) {}
 
+            // Sumar puntos y estrellas
             data.stars = (data.stars || 0) + estrellasGanadas;
             data.points = (data.points || 0) + (estrellasGanadas * 50);
 
-            // Marcar Misión 6 completada
-            if (!data.completedMissions) data.completedMissions = [];
-            if (!data.completedMissions.includes(MISSION_ID)) data.completedMissions.push(MISSION_ID);
+            // Asegurar que los arreglos existan
+            if (!Array.isArray(data.completedMissions)) data.completedMissions = [];
+            if (!Array.isArray(data.unlockedMissions)) data.unlockedMissions = [1];
 
-            // Desbloquear Misión 7
-            if (!data.unlockedMissions) data.unlockedMissions = [1, 2, 3, 4, 5, 6];
-            if (!data.unlockedMissions.includes(7)) data.unlockedMissions.push(7);
+            // Registrar Misión 6 como completada
+            if (!data.completedMissions.includes(6)) {
+                data.completedMissions.push(6);
+            }
 
-            // Guardar progreso global
-            localStorage.setItem("MISION_ESPACIAL_DATA", JSON.stringify(data));
-            localStorage.setItem("GAME_STATE", JSON.stringify(data));
+            // Desbloquear Misión 7 explícitamente
+            if (!data.unlockedMissions.includes(7)) {
+                data.unlockedMissions.push(7);
+            }
+
+            // Guardar en ambas claves para evitar errores de lectura en map.html
+            const dataString = JSON.stringify(data);
+            localStorage.setItem("MISION_ESPACIAL_DATA", dataString);
+            localStorage.setItem("GAME_STATE", dataString);
 
             alert(`🎉 ¡Misión 6 Completada!\nHas ganado ${estrellasGanadas} estrellas y desbloqueado la Misión 7.`);
 
-            // Redirigir directamente al mapa
             window.location.href = "map.html";
         }
 
-        // REDIRECCIÓN DIRECTA AL MAPA DESDE EL BOTÓN VOLVER
         document.getElementById("btn-back").addEventListener("click", () => {
             window.location.href = "map.html";
         });
