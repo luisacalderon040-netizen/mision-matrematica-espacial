@@ -4,89 +4,207 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Misión Matemática Espacial</title>
-    <!-- Estilos CSS del juego -->
     <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0b0f26;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .main-card {
+            background: #121838;
+            border: 1px solid #1e295d;
+            border-radius: 20px;
+            padding: 35px 25px;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 0 35px rgba(0, 240, 255, 0.15);
+            text-align: center;
+        }
+
+        .rocket-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .subtitle-cyan {
+            color: #00f0ff;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+
+        .slogan {
+            color: #a0aec0;
+            font-size: 13px;
+            font-style: italic;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid #1e295d;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .avatar-box {
+            background: #182046;
+            border-radius: 50%;
+            padding: 8px;
+            font-size: 24px;
+        }
+
+        .input-label {
+            color: #00f0ff;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .player-input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid #00f0ff;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            outline: none;
+            padding-bottom: 4px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .stat-badge {
+            background: #182046;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 13px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .start-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(90deg, #00f0ff, #7b2cbf);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.02);
+            opacity: 0.95;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Fondo de Estrellas Animadas -->
-    <div id="stars-container"></div>
-    <div id="stars2-container"></div>
+    <div class="main-card">
+        <div class="rocket-icon">🚀</div>
+        <h1>MISIÓ N MATEMÁ TICA</h1>
+        <div class="subtitle-cyan">ESPACIAL</div>
+        <p class="slogan">"Explora el universo. Resuelve desafíos. Conquista las matemáticas."</p>
 
-    <div class="app-container">
-
-        <!-- ========================================== -->
-        <!-- PANTALLA PRINCIPAL / INICIO                -->
-        <!-- ========================================== -->
-        <section id="screen-welcome" class="screen active">
-            <div class="hero-card glassmorphism">
-                <div class="space-ship-badge">🚀</div>
-                <h1 class="game-title">MISIÓN MATEMÁTICA<br><span class="highlight">ESPACIAL</span></h1>
-                <p class="game-subtitle">"Explora el universo. Resuelve desafíos. Conquista las matemáticas."</p>
-
-                <!-- Perfil del Jugador -->
-                <div class="player-profile-card">
-                    <div class="avatar-selection">
-                        <span class="avatar-icon" id="player-avatar">👨‍🚀</span>
-                    </div>
-                    <div class="player-info">
-                        <label for="player-name-input">Nombre del Cadete Espacial:</label>
-                        <input type="text" id="player-name-input" value="Explorador" maxlength="15">
-                    </div>
-                </div>
-
-                <!-- Estadísticas Iniciales -->
-                <div class="stats-summary-bar">
-                    <div class="stat-badge">
-                        <span class="stat-icon">⭐</span>
-                        <span id="welcome-stars">0</span> Estrellas
-                    </div>
-                    <div class="stat-badge">
-                        <span class="stat-icon">🏆</span>
-                        <span id="welcome-points">0</span> Puntos
-                    </div>
-                </div>
-
-                <button id="btn-start" class="btn-primary-space">
-                    <span class="btn-text">COMENZAR AVENTURA</span>
-                    <span class="btn-icon">🚀</span>
-                </button>
+        <div class="input-group">
+            <div class="avatar-box">👨‍🚀</div>
+            <div style="width: 100%;">
+                <div class="input-label">NOMBRE DEL CADETE ESPACIAL:</div>
+                <input type="text" id="playerName" class="player-input" value="Explorador">
             </div>
-        </section>
+        </div>
 
-        <!-- ========================================== -->
-        <!-- PANTALLA DEL MAPA DEL UNIVERSO             -->
-        <!-- ========================================== -->
-        <section id="screen-map" class="screen">
-            <!-- Barra Superior de Navegación del Mapa -->
-            <header class="top-nav glassmorphism">
-                <div class="user-pill">
-                    <span id="map-avatar">👨‍🚀</span>
-                    <span id="map-player-name">Explorador</span>
-                </div>
-                <div class="nav-stats">
-                    <div class="stat-pill">⭐ <span id="map-stars">0</span></div>
-                    <div class="stat-pill">🏆 <span id="map-points">0</span></div>
-                </div>
-                <button id="btn-reset-progress" class="btn-secondary-space" title="Reiniciar Progreso">
-                    🔄 Reiniciar
-                </button>
-            </header>
+        <div class="stats-grid">
+            <div class="stat-badge">⭐ <span id="starsCount">0</span> Estrellas</div>
+            <div class="stat-badge">🏆 <span id="pointsCount">0</span> Puntos</div>
+        </div>
 
-            <main class="map-view">
-                <h2 class="section-title">🗺️ Mapa de Misiones Espaciales</h2>
-                <p class="section-subtitle">Selecciona un planeta para iniciar la misión</p>
-
-                <!-- Contenedor del Mapa con los Planetas -->
-                <div class="planets-grid" id="planets-container">
-                    <!-- Los planetas se generarán dinámicamente desde script.js -->
-                </div>
-            </main>
-        </section>
-
+        <button type="button" class="start-btn" onclick="iniciarAventura()">COMENZAR AVENTURA 🚀</button>
     </div>
 
-    <!-- Script Principal JavaScript -->
     <script src="script.js"></script>
+    <script>
+        // Cargar datos previos si existen
+        window.onload = function() {
+            try {
+                let state = JSON.parse(localStorage.getItem("GAME_STATE")) || {};
+                if (state.playerName) {
+                    document.getElementById("playerName").value = state.playerName;
+                }
+                document.getElementById("starsCount").innerText = state.stars || 0;
+                document.getElementById("pointsCount").innerText = state.points || 0;
+            } catch (e) {
+                console.log("Creando nuevo estado de juego");
+            }
+        };
+
+        // Función que desbloquea el botón
+        function iniciarAventura() {
+            const nombreIngresado = document.getElementById("playerName").value.trim() || "Explorador";
+
+            let state = {};
+            try {
+                state = JSON.parse(localStorage.getItem("GAME_STATE")) || {};
+            } catch (e) {
+                state = {};
+            }
+
+            // Actualizar datos del usuario
+            state.playerName = nombreIngresado;
+            if (!state.unlockedMissions || !Array.isArray(state.unlockedMissions)) {
+                state.unlockedMissions = [1];
+            }
+            if (!state.completedMissions || !Array.isArray(state.completedMissions)) {
+                state.completedMissions = [];
+            }
+
+            // Guardar
+            localStorage.setItem("GAME_STATE", JSON.stringify(state));
+
+            // Redirigir a la primera misión
+            window.location.href = "mission1.html";
+        }
+    </script>
 </body>
 </html>
