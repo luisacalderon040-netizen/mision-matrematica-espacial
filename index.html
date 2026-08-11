@@ -40,7 +40,7 @@
         }
 
         h1 {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 800;
             letter-spacing: 1px;
             margin-bottom: 4px;
@@ -143,7 +143,7 @@
 
     <div class="main-card">
         <div class="rocket-icon">🚀</div>
-        <h1>MISIÓ N MATEMÁ TICA</h1>
+        <h1>MISIÓN MATEMÁTICA</h1>
         <div class="subtitle-cyan">ESPACIAL</div>
         <p class="slogan">"Explora el universo. Resuelve desafíos. Conquista las matemáticas."</p>
 
@@ -165,42 +165,67 @@
 
     <script src="script.js"></script>
     <script>
-        // Cargar datos previos si existen
-        window.onload = function() {
+        // Cargar datos previos si existen al abrir la página
+        window.addEventListener("DOMContentLoaded", function() {
             try {
-                let state = JSON.parse(localStorage.getItem("GAME_STATE")) || {};
-                if (state.playerName) {
-                    document.getElementById("playerName").value = state.playerName;
+                const savedData = localStorage.getItem("GAME_STATE") || localStorage.getItem("MISION_ESPACIAL_DATA");
+                if (savedData) {
+                    const state = JSON.parse(savedData);
+                    
+                    const nameInput = document.getElementById("playerName");
+                    if (nameInput && (state.playerName || state.username)) {
+                        nameInput.value = state.playerName || state.username;
+                    }
+                    
+                    const starsEl = document.getElementById("starsCount");
+                    if (starsEl) starsEl.innerText = state.stars || 0;
+                    
+                    const pointsEl = document.getElementById("pointsCount");
+                    if (pointsEl) pointsEl.innerText = state.points || 0;
                 }
-                document.getElementById("starsCount").innerText = state.stars || 0;
-                document.getElementById("pointsCount").innerText = state.points || 0;
             } catch (e) {
-                console.log("Creando nuevo estado de juego");
+                console.warn("No se pudo recuperar el estado inicial del juego:", e);
             }
-        };
+        });
 
-        // Función que desbloquea el botón
+        // Guardar nombre e iniciar la primera misión
         function iniciarAventura() {
             const nombreIngresado = document.getElementById("playerName").value.trim() || "Explorador";
 
-            let state = {};
+            let state = {
+                playerName: nombreIngresado,
+                username: nombreIngresado,
+                avatar: "👨‍🚀",
+                stars: 0,
+                points: 0,
+                unlockedMissions: [1],
+                completedMissions: []
+            };
+
+            // Intentar combinar con datos previos existentes si los hay
             try {
-                state = JSON.parse(localStorage.getItem("GAME_STATE")) || {};
+                const savedData = localStorage.getItem("GAME_STATE") || localStorage.getItem("MISION_ESPACIAL_DATA");
+                if (savedData) {
+                    const parsed = JSON.parse(savedData);
+                    state = { ...state, ...parsed };
+                    state.playerName = nombreIngresado;
+                    state.username = nombreIngresado;
+                }
             } catch (e) {
-                state = {};
+                console.warn("Creando un estado de juego nuevo");
             }
 
-            // Actualizar datos del usuario
-            state.playerName = nombreIngresado;
-            if (!state.unlockedMissions || !Array.isArray(state.unlockedMissions)) {
+            // Asegurar campos esenciales
+            if (!Array.isArray(state.unlockedMissions) || state.unlockedMissions.length === 0) {
                 state.unlockedMissions = [1];
             }
-            if (!state.completedMissions || !Array.isArray(state.completedMissions)) {
+            if (!Array.isArray(state.completedMissions)) {
                 state.completedMissions = [];
             }
 
-            // Guardar
+            // Guardar sincronizado en ambas claves de almacenamiento
             localStorage.setItem("GAME_STATE", JSON.stringify(state));
+            localStorage.setItem("MISION_ESPACIAL_DATA", JSON.stringify(state));
 
             // Redirigir a la primera misión
             window.location.href = "mission1.html";
