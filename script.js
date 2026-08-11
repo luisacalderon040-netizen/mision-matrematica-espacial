@@ -11,7 +11,7 @@ const PLANETAS_DATA = [
     { id: 5, name: "Comparación y Redondeo", emoji: "🔴", page: "mission5.html" },
     { id: 6, name: "Resta espacial", emoji: "🟣", page: "mission6.html" },
     { id: 7, name: "Multiplicación", emoji: "🟠", page: "mission7.html" },
-    { id: 8, name: "División", emoji: "🟤", page: "#" },
+    { id: 8, name: "División", emoji: "🟤", page: "mission8.html" },
     { id: 9, name: "Medidas y formas", emoji: "⚪", page: "#" },
     { id: 10, name: "Desafío espacial", emoji: "🌟", page: "#" }
 ];
