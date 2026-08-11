@@ -4,7 +4,7 @@
 
 // Definición de las 10 misiones/planetas del juego
 const PLANETAS_DATA = [
-    { id: 1, name: "Conociendo los números", emoji: "🪐", page: "missions/mission1.html" },
+    { id: 1, name: "Conociendo los números", emoji: "🪐", page: "mission1.html" },
     { id: 2, name: "Explorando el conteo", emoji: "🔴", page: "#" },
     { id: 3, name: "Comparando planetas", emoji: "🟡", page: "#" },
     { id: 4, name: "El valor posicional", emoji: "🟢", page: "#" },
