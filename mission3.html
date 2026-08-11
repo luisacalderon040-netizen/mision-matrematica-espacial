@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misión 3: Comparando Planetas</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .mission-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .mission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 15px 25px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+            border: 1px solid var(--glass-border);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary-cyan), var(--primary-violet));
+            transition: width 0.4s ease;
+            box-shadow: 0 0 10px var(--primary-cyan);
+        }
+
+        .question-card {
+            padding: 30px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .question-text {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .visual-container {
+            font-size: 2.2rem;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px dashed var(--glass-border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-light);
+            padding: 15px;
+            border-radius: 14px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover {
+            background: rgba(0, 242, 255, 0.15);
+            border-color: var(--primary-cyan);
+            transform: translateY(-2px);
+        }
+
+        .option-btn.selected {
+            background: rgba(0, 242, 255, 0.3);
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+        }
+
+        .feedback-message {
+            min-height: 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 15px 0;
+        }
+
+        .feedback-correct { color: #00ff88; text-shadow: 0 0 8px rgba(0, 255, 136, 0.5); }
+        .feedback-wrong { color: #ff4d4d; text-shadow: 0 0 8px rgba(255, 77, 77, 0.5); }
+    </style>
+</head>
+<body>
+
+    <!-- Fondo de Estrellas -->
+    <div id="stars-container"></div>
+    <div id="stars2-container"></div>
+
+    <div class="app-container mission-container">
+        
+        <!-- Header de la Misión -->
+        <header class="glassmorphism mission-header">
+            <button id="btn-back" class="btn-secondary-space">⬅ Volver al Mapa</button>
+            <div class="user-pill">🟡 Misión 3: Comparando planetas</div>
+            <div class="stat-pill">⭐ <span id="m-stars">0</span></div>
+        </header>
+
+        <!-- Barra de Progreso de la Misión -->
+        <div class="progress-bar-container">
+            <div id="progress-fill" class="progress-bar-fill"></div>
+        </div>
+
+        <!-- Tarjeta del Ejercicio -->
+        <main class="glassmorphism question-card">
+            <div class="planet-number" id="question-number">Pregunta 1 de 3</div>
+            <h2 class="question-text" id="question-text">Cargando desafío espacial...</h2>
+
+            <div class="visual-container" id="visual-container">
+                <!-- Se mostrará la comparación -->
+            </div>
+
+            <div class="options-grid" id="options-container">
+                <!-- Las opciones se generarán dinámicamente -->
+            </div>
+
+            <div class="feedback-message" id="feedback"></div>
+
+            <button id="btn-action" class="btn-primary-space" style="margin-top: 15px;">Comprobar Respuesta 🚀</button>
+        </main>
+
+    </div>
+
+    <script>
+        // Lógica de la Misión 3
+        const preguntas = [
+            {
+                texto: "¿Qué símbolo correcto compara estos dos grupos de estrellas?",
+                visual: "⭐ ⭐ ⭐  ❓  ⭐ ⭐ ⭐ ⭐ ⭐",
+                opciones: ["< (Menor que)", "> (Mayor que)", "= (Igual que)"],
+                correcta: 0
+            },
+            {
+                texto: "¿Cuál número es MAYOR entre el diámetro de estas dos lunas?",
+                visual: "🔴 8,450 km  VS  🔵 8,540 km",
+                opciones: ["8,450 km", "8,540 km", "Son iguales"],
+                correcta: 1
+            },
+            {
+                texto: "¿Qué relación es correcta para estos dos escuadrones de naves?",
+                visual: "🛸 🛸 🛸 🛸  ❓  🛸 🛸 🛸 🛸",
+                opciones: ["< (Menor que)", "> (Mayor que)", "= (Igual a)"],
+                correcta: 2
+            }
+        ];
+
+        let indicePregunta = 0;
+        let opcionSeleccionada = null;
+        let estrellasGanadas = 0;
+
+        const elPreguntaNum = document.getElementById("question-number");
+        const elPreguntaTexto = document.getElementById("question-text");
+        const elVisual = document.getElementById("visual-container");
+        const elOpciones = document.getElementById("options-container");
+        const elFeedback = document.getElementById("feedback");
+        const elBtnAction = document.getElementById("btn-action");
+        const elProgress = document.getElementById("progress-fill");
+
+        function cargarPregunta() {
+            opcionSeleccionada = null;
+            elFeedback.textContent = "";
+            elBtnAction.textContent = "Comprobar Respuesta 🚀";
+
+            const p = preguntas[indicePregunta];
+            elPreguntaNum.textContent = `Pregunta ${indicePregunta + 1} de ${preguntas.length}`;
+            elPreguntaTexto.textContent = p.texto;
+            elVisual.textContent = p.visual;
+            elProgress.style.width = `${((indicePregunta) / preguntas.length) * 100}%`;
+
+            elOpciones.innerHTML = "";
+            p.opciones.forEach((op, idx) => {
+                const btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.textContent = op;
+                btn.onclick = () => seleccionarOpcion(idx, btn);
+                elOpciones.appendChild(btn);
+            });
+        }
+
+        function seleccionarOpcion(index, element) {
+            document.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
+            element.classList.add("selected");
+            opcionSeleccionada = index;
+        }
+
+        elBtnAction.addEventListener("click", () => {
+            if (elBtnAction.textContent.includes("Siguiente") || elBtnAction.textContent.includes("Finalizar")) {
+                indicePregunta++;
+                if (indicePregunta < preguntas.length) {
+                    cargarPregunta();
+                } else {
+                    finalizarMision();
+                }
+                return;
+            }
+
+            if (opcionSeleccionada === null) {
+                elFeedback.className = "feedback-message feedback-wrong";
+                elFeedback.textContent = "¡Selecciona una respuesta primero!";
+                return;
+            }
+
+            const p = preguntas[indicePregunta];
+            if (opcionSeleccionada === p.correcta) {
+                estrellasGanadas++;
+                document.getElementById("m-stars").textContent = estrellasGanadas;
+                elFeedback.className = "feedback-message feedback-correct";
+                elFeedback.textContent = "✨ ¡Correcto! Comparación espacial impecable.";
+            } else {
+                elFeedback.className = "feedback-message feedback-wrong";
+                elFeedback.textContent = "❌ Incorrecto. ¡Compara bien los datos!";
+            }
+
+            elBtnAction.textContent = (indicePregunta + 1 < preguntas.length) ? "Siguiente Pregunta ➡" : "Finalizar Misión 🏆";
+        });
+
+        function finalizarMision() {
+            elProgress.style.width = "100%";
+            const data = JSON.parse(localStorage.getItem("MISION_ESPACIAL_DATA") || "{}");
+            data.stars = (data.stars || 0) + estrellasGanadas;
+            data.points = (data.points || 0) + (estrellasGanadas * 50);
+            
+            if (!data.completedMissions) data.completedMissions = [];
+            if (!data.completedMissions.includes(3)) data.completedMissions.push(3);
+
+            if (!data.unlockedMissions) data.unlockedMissions = [1, 2, 3];
+            if (!data.unlockedMissions.includes(4)) data.unlockedMissions.push(4);
+
+            localStorage.setItem("MISION_ESPACIAL_DATA", JSON.stringify(data));
+
+            alert(`🎉 ¡Misión 3 Completada!\nHas ganado ${estrellasGanadas} estrellas y desbloqueado la Misión 4.`);
+            window.location.href = "./index.html";
+        }
+
+        document.getElementById("btn-back").addEventListener("click", () => {
+            window.location.href = "./index.html";
+        });
+
+        cargarPregunta();
+    </script>
+</body>
+</html>
