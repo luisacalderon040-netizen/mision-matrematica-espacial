@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misión 6: Resta Espacial</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .mission-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .mission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 15px 25px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00f2ff, #7000ff);
+            transition: width 0.4s ease;
+            box-shadow: 0 0 10px #00f2ff;
+        }
+
+        .question-card {
+            padding: 30px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .question-text {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .visual-container {
+            font-size: 2rem;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 15px;
+            border-radius: 14px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover {
+            background: rgba(0, 242, 255, 0.15);
+            border-color: #00f2ff;
+            transform: translateY(-2px);
+        }
+
+        .option-btn.selected {
+            background: rgba(0, 242, 255, 0.3);
+            border-color: #00f2ff;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+        }
+
+        .feedback-message {
+            min-height: 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 15px 0;
+        }
+
+        .feedback-correct {
+            color: #00ff88;
+            text-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+        }
+
+        .feedback-wrong {
+            color: #ff4d4d;
+            text-shadow: 0 0 8px rgba(255, 77, 77, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="stars-container"></div>
+    <div id="stars2-container"></div>
+
+    <div class="app-container mission-container">
+        
+        <!-- Encabezado de la Misión -->
+        <header class="glassmorphism mission-header">
+            <button id="btn-back" class="btn-secondary-space">⬅ Volver al Mapa</button>
+            <div class="user-pill">🟣 Misión 6: Resta Espacial</div>
+            <div class="stat-pill">⭐ <span id="m-stars">0</span></div>
+        </header>
+
+        <!-- Barra de Progreso -->
+        <div class="progress-bar-container">
+            <div id="progress-fill" class="progress-bar-fill"></div>
+        </div>
+
+        <!-- Tarjeta Interactiva -->
+        <main class="glassmorphism question-card">
+            <div class="planet-number" id="question-number">Pregunta 1 de 3</div>
+            <h2 class="question-text" id="question-text">Cargando desafío de resta espacial...</h2>
+
+            <div class="visual-container" id="visual-container"></div>
+
+            <div class="options-grid" id="options-container"></div>
+
+            <div class="feedback-message" id="feedback"></div>
+
+            <button id="btn-action" class="btn-primary-space" style="margin-top: 15px;">Comprobar Respuesta 🚀</button>
+        </main>
+
+    </div>
+
+    <!-- Script global de audio y guardado -->
+    <script src="script.js"></script>
+
+    <!-- Lógica de la Misión 6: Resta Espacial -->
+    <script>
+        const preguntas = [
+            {
+                texto: "Un tanque de oxígeno tiene 850 litros. Si los astronautas consumen 320 litros, ¿cuántos litros quedan?",
+                visual: "🛸 850 L  −  320 L = ❓",
+                opciones: ["530 L", "510 L", "430 L", "550 L"],
+                correcta: 0
+            },
+            {
+                texto: "La nave estaba a 1,200 km de la estación y avanzó 450 km hacia ella. ¿A qué distancia se encuentra ahora?",
+                visual: "🌌 1,200 km  −  450 km = ❓",
+                opciones: ["850 km", "750 km", "650 km", "700 km"],
+                correcta: 1
+            },
+            {
+                texto: "Había 64 asteroides detectados en el radar y 28 de ellos fueron destruidos. ¿Cuántos asteroides quedan?",
+                visual: "☄️ 64  −  28 = ❓",
+                opciones: ["34", "46", "36", "38"],
+                correcta: 2
+            }
+        ];
+
+        let indicePregunta = 0;
+        let opcionSeleccionada = null;
+        let estrellasGanadas = 0;
+
+        const elPreguntaNum = document.getElementById("question-number");
+        const elPreguntaTexto = document.getElementById("question-text");
+        const elVisual = document.getElementById("visual-container");
+        const elOpciones = document.getElementById("options-container");
+        const elFeedback = document.getElementById("feedback");
+        const elBtnAction = document.getElementById("btn-action");
+        const elProgress = document.getElementById("progress-fill");
+
+        function cargarPregunta() {
+            opcionSeleccionada = null;
+            elFeedback.textContent = "";
+            elBtnAction.textContent = "Comprobar Respuesta 🚀";
+
+            const p = preguntas[indicePregunta];
+            elPreguntaNum.textContent = `Pregunta ${indicePregunta + 1} de ${preguntas.length}`;
+            elPreguntaTexto.textContent = p.texto;
+            elVisual.textContent = p.visual;
+            elProgress.style.width = `${((indicePregunta) / preguntas.length) * 100}%`;
+
+            elOpciones.innerHTML = "";
+            p.opciones.forEach((op, idx) => {
+                const btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.textContent = op;
+                btn.onclick = () => seleccionarOpcion(idx, btn);
+                elOpciones.appendChild(btn);
+            });
+        }
+
+        function seleccionarOpcion(index, element) {
+            document.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
+            element.classList.add("selected");
+            opcionSeleccionada = index;
+        }
+
+        elBtnAction.addEventListener("click", () => {
+            if (elBtnAction.textContent.includes("Siguiente") || elBtnAction.textContent.includes("Finalizar")) {
+                indicePregunta++;
+                if (indicePregunta < preguntas.length) {
+                    cargarPregunta();
+                } else {
+                    finalizarMision();
+                }
+                return;
+            }
+
+            if (opcionSeleccionada === null) {
+                elFeedback.className = "feedback-message feedback-wrong";
+                elFeedback.textContent = "¡Selecciona una respuesta primero!";
+                if (window.sounds) window.sounds.playWrong();
+                return;
+            }
+
+            const p = preguntas[indicePregunta];
+            if (opcionSeleccionada === p.correcta) {
+                estrellasGanadas++;
+                document.getElementById("m-stars").textContent = estrellasGanadas;
+                elFeedback.className = "feedback-message feedback-correct";
+                elFeedback.textContent = "✨ ¡Excelente! Resta calculada a la perfección.";
+                if (window.sounds) window.sounds.playCorrect();
+            } else {
+                elFeedback.className = "feedback-message feedback-wrong";
+                elFeedback.textContent = "❌ Incorrecto. ¡Revisa tu cálculo de resta!";
+                if (window.sounds) window.sounds.playWrong();
+            }
+
+            elBtnAction.textContent = (indicePregunta + 1 < preguntas.length) ? "Siguiente Pregunta ➡" : "Finalizar Misión 🏆";
+        });
+
+        function finalizarMision() {
+            elProgress.style.width = "100%";
+            if (window.sounds) window.sounds.playVictory();
+
+            const data = JSON.parse(localStorage.getItem("MISION_ESPACIAL_DATA") || "{}");
+            data.stars = (data.stars || 0) + estrellasGanadas;
+            data.points = (data.points || 0) + (estrellasGanadas * 50);
+            
+            if (!data.completedMissions) data.completedMissions = [];
+            if (!data.completedMissions.includes(6)) data.completedMissions.push(6);
+
+            if (!data.unlockedMissions) data.unlockedMissions = [1, 2, 3, 4, 5, 6];
+            if (!data.unlockedMissions.includes(7)) data.unlockedMissions.push(7);
+
+            localStorage.setItem("MISION_ESPACIAL_DATA", JSON.stringify(data));
+
+            alert(`🎉 ¡Misión 6 Completada!\nHas ganado ${estrellasGanadas} estrellas y desbloqueado la Misión 7.`);
+            window.location.href = "./index.html";
+        }
+
+        document.getElementById("btn-back").addEventListener("click", () => {
+            window.location.href = "./index.html";
+        });
+
+        cargarPregunta();
+    </script>
+</body>
+</html>
