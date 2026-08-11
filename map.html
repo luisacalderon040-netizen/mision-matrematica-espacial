@@ -6,221 +6,215 @@
     <title>Mapa de Misiones Espaciales</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #0b0f26;
-            color: #ffffff;
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
         .map-container {
             max-width: 900px;
-            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
         }
 
-        header {
+        .map-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(18, 24, 56, 0.8);
-            border: 1px solid #1e295d;
+            margin-bottom: 30px;
             padding: 15px 25px;
-            border-radius: 16px;
-            margin-bottom: 25px;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
         }
 
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .stats-badge {
-            background: #182046;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            display: flex;
-            gap: 15px;
-        }
-
-        h2 {
-            text-align: center;
-            color: #00f0ff;
-            margin-bottom: 20px;
-            letter-spacing: 1px;
-        }
-
-        .grid-planets {
+        .missions-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
+            margin-top: 20px;
         }
 
-        .planet-card {
-            background: #121838;
-            border: 2px solid #1e295d;
+        .mission-card {
+            padding: 25px;
             border-radius: 16px;
-            padding: 20px;
             text-align: center;
             transition: all 0.3s ease;
             position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
-        .planet-card.unlocked {
-            border-color: #00f0ff;
-            cursor: pointer;
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
-        }
-
-        .planet-card.unlocked:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 25px rgba(0, 240, 255, 0.4);
-            background: #182046;
-        }
-
-        .planet-card.locked {
+        /* Estado: Bloqueado */
+        .mission-card.locked {
             opacity: 0.5;
-            filter: grayscale(80%);
+            filter: grayscale(0.8);
             cursor: not-allowed;
         }
 
-        .planet-emoji {
-            font-size: 45px;
+        /* Estado: Desbloqueado */
+        .mission-card.unlocked {
+            opacity: 1;
+            filter: none;
+            border-color: #00f0ff;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+            cursor: pointer;
+        }
+
+        .mission-card.unlocked:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.4);
+        }
+
+        /* Estado: Completado */
+        .mission-card.completed {
+            border-color: #00ff88;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .mission-card.completed::after {
+            content: "✓ COMPLETADA";
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .planet-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+        }
+
+        .mission-title {
+            font-size: 1.2rem;
+            font-weight: bold;
             margin-bottom: 10px;
+            color: #ffffff;
         }
 
-        .planet-title {
-            font-size: 1.05rem;
+        .btn-start {
+            margin-top: 15px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
             font-weight: bold;
-            margin-bottom: 8px;
+            cursor: pointer;
+            width: 100%;
         }
 
-        .status-tag {
-            font-size: 0.8rem;
-            font-weight: bold;
-            padding: 4px 10px;
-            border-radius: 10px;
-            display: inline-block;
+        .btn-locked {
+            background: rgba(255, 255, 255, 0.1);
+            color: #888;
+            cursor: not-allowed;
         }
 
-        .tag-unlocked { background: rgba(0, 240, 255, 0.2); color: #00f0ff; }
-        .tag-completed { background: rgba(0, 255, 136, 0.2); color: #00ff88; }
-        .tag-locked { background: rgba(255, 255, 255, 0.1); color: #a0aec0; }
+        .btn-active {
+            background: linear-gradient(90deg, #00f0ff, #7b2cbf);
+            color: white;
+        }
 
-        .btn-restart {
-            background: rgba(255, 77, 77, 0.2);
-            color: #ff4d4d;
-            border: 1px solid #ff4d4d;
-            padding: 8px 12px;
+        .btn-secondary-space {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 0.8rem;
-            margin-top: 30px;
         }
     </style>
 </head>
 <body>
 
-    <div class="map-container">
-        <header>
-            <div class="user-info">
-                👨‍🚀 Cadete: <span id="display-name">Explorador</span>
-            </div>
-            <div class="stats-badge">
-                <span>⭐ <span id="display-stars">0</span></span>
-                <span>🏆 <span id="display-points">0</span></span>
-            </div>
+    <div id="stars-container"></div>
+    <div id="stars2-container"></div>
+
+    <div class="app-container map-container">
+        
+        <!-- Header con Estadísticas -->
+        <header class="glassmorphism map-header">
+            <button id="btn-home" class="btn-secondary-space">🏠 Inicio</button>
+            <div class="user-pill">🗺️ Mapa de Misiones</div>
+            <div class="stat-pill">⭐ Total: <span id="total-stars">0</span></div>
         </header>
 
-        <h2>🗺️ MAPA DEL RECORRIDO GALÁCTICO</h2>
+        <h1 style="text-align: center; margin-bottom: 10px; color: white;">Selecciona un Planeta</h1>
+        <p style="text-align: center; color: #aaa; margin-bottom: 30px;">Completa cada misión para desbloquear la siguiente exploración.</p>
 
-        <div class="grid-planets" id="planets-grid">
-            <!-- Los planetas se renderizan dinámicamente -->
+        <!-- Grid con las Misiones -->
+        <div class="missions-grid">
+            
+            <!-- Misión 1 -->
+            <div class="glassmorphism mission-card locked" id="card-m1">
+                <div class="planet-icon">🪐</div>
+                <div class="mission-title">Misión 1: Conociendo los Números</div>
+                <button class="btn-start btn-locked" id="btn-m1" disabled>🔒 Bloqueada</button>
+            </div>
+
+            <!-- Misión 2 -->
+            <div class="glassmorphism mission-card locked" id="card-m2">
+                <div class="planet-icon">🔴</div>
+                <div class="mission-title">Misión 2: Explorando el Conteo</div>
+                <button class="btn-start btn-locked" id="btn-m2" disabled>🔒 Bloqueada</button>
+            </div>
+
+            <!-- Misión 3 -->
+            <div class="glassmorphism mission-card locked" id="card-m3">
+                <div class="planet-icon">🌌</div>
+                <div class="mission-title">Misión 3: Sumas Espaciales</div>
+                <button class="btn-start btn-locked" id="btn-m3" disabled>🔒 Bloqueada</button>
+            </div>
+
         </div>
 
-        <div style="text-align: center;">
-            <button class="btn-restart" id="btn-logout">⚙️ Cambiar de Cadete / Salir</button>
-        </div>
     </div>
 
     <script>
-        const PLANETAS_DATA = [
-            { id: 1, name: "Conociendo los números", emoji: "🪐", page: "mission1.html" },
-            { id: 2, name: "Explorando el conteo", emoji: "🔴", page: "mission2.html" },
-            { id: 3, name: "Comparando planetas", emoji: "🟡", page: "mission3.html" },
-            { id: 4, name: "El valor posicional", emoji: "🟢", page: "mission4.html" },
-            { id: 5, name: "Comparación y Redondeo", emoji: "🔴", page: "mission5.html" },
-            { id: 6, name: "Resta espacial", emoji: "🟣", page: "mission6.html" },
-            { id: 7, name: "Multiplicación", emoji: "🟠", page: "mission7.html" },
-            { id: 8, name: "División", emoji: "🟤", page: "mission8.html" },
-            { id: 9, name: "Medidas y formas", emoji: "⚪", page: "mission9.html" },
-            { id: 10, name: "Desafío final", emoji: "🌠", page: "mission10.html" },
-            { id: 11, name: "Gran FINAL de Recorrido Galáctico", emoji: "👑", page: "mission11.html" }
-        ];
-
         document.addEventListener("DOMContentLoaded", () => {
-            // Cargar datos del estado
-            let state = { playerName: "Explorador", stars: 0, points: 0, unlockedMissions: [1], completedMissions: [] };
+            // 1. Obtener los datos guardados
+            let data = {};
             try {
                 const saved = localStorage.getItem("GAME_STATE") || localStorage.getItem("MISION_ESPACIAL_DATA");
-                if (saved) state = JSON.parse(saved);
+                if (saved) data = JSON.parse(saved);
             } catch(e) {}
 
-            document.getElementById("display-name").textContent = state.playerName || state.username || "Explorador";
-            document.getElementById("display-stars").textContent = state.stars || 0;
-            document.getElementById("display-points").textContent = state.points || 0;
+            // Valores predeterminados si es la primera vez que juega
+            const unlocked = data.unlockedMissions || [1];
+            const completed = data.completedMissions || [];
+            const stars = data.stars || 0;
 
-            const grid = document.getElementById("planets-grid");
-            grid.innerHTML = "";
+            // Actualizar total de estrellas en pantalla
+            document.getElementById("total-stars").textContent = stars;
 
-            const unlocked = state.unlockedMissions || [1];
-            const completed = state.completedMissions || [];
+            // Definición de las misiones disponibles
+            const misiones = [
+                { id: 1, card: "card-m1", btn: "btn-m1", file: "mission1.html" },
+                { id: 2, card: "card-m2", btn: "btn-m2", file: "mission2.html" },
+                { id: 3, card: "card-m3", btn: "btn-m3", file: "mission3.html" }
+            ];
 
-            PLANETAS_DATA.forEach(p => {
-                const isUnlocked = unlocked.includes(p.id);
-                const isCompleted = completed.includes(p.id);
+            // 2. Renderizar el estado de cada planeta/misión
+            misiones.forEach(m => {
+                const cardEl = document.getElementById(m.card);
+                const btnEl = document.getElementById(m.btn);
 
-                const card = document.createElement("div");
-                card.className = `planet-card ${isUnlocked ? 'unlocked' : 'locked'}`;
-
-                let tagHtml = `<span class="status-tag tag-locked">🔒 Bloqueado</span>`;
-                if (isCompleted) {
-                    tagHtml = `<span class="status-tag tag-completed">✅ Completado</span>`;
-                } else if (isUnlocked) {
-                    tagHtml = `<span class="status-tag tag-unlocked">🚀 Disponible</span>`;
-                }
-
-                card.innerHTML = `
-                    <div class="planet-emoji">${p.emoji}</div>
-                    <div class="planet-title">Misión ${p.id}: ${p.name}</div>
-                    ${tagHtml}
-                `;
+                const isUnlocked = unlocked.includes(m.id);
+                const isCompleted = completed.includes(m.id);
 
                 if (isUnlocked) {
-                    card.addEventListener("click", () => {
-                        window.location.href = p.page;
-                    });
+                    cardEl.classList.remove("locked");
+                    cardEl.classList.add("unlocked");
+                    btnEl.classList.remove("btn-locked");
+                    btnEl.classList.add("btn-primary-space", "btn-active");
+                    btnEl.removeAttribute("disabled");
+                    btnEl.textContent = isCompleted ? "Revisar Misión 🚀" : "Iniciar Misión 🚀";
+
+                    // Al hacer clic lleva a la misión
+                    cardEl.onclick = () => {
+                        window.location.href = m.file;
+                    };
                 }
 
-                grid.appendChild(card);
+                if (isCompleted) {
+                    cardEl.classList.add("completed");
+                }
             });
 
-            document.getElementById("btn-logout").addEventListener("click", () => {
+            // Botón Inicio
+            document.getElementById("btn-home").addEventListener("click", () => {
                 window.location.href = "index.html";
             });
         });
